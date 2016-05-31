@@ -22,6 +22,9 @@ char * generate_incbin(const char *, unsigned, unsigned);
 int handle_incbin_text(struct incbin *, const unsigned char *, FILE *);
 void write_incbin_for_segment(const char *, unsigned, unsigned, FILE *);
 void preview_incbin(const unsigned char *, unsigned, unsigned);
+void dump_data_line_as_text(FILE *, const unsigned char *, unsigned, unsigned);
+void dump_incbin_as_text(struct incbin *, const unsigned char *);
+void dump_incbin_as_binary(struct incbin *, const unsigned char *);
 
 struct incbin {
   unsigned offset;
@@ -99,6 +102,10 @@ struct command commands[] = {
   {"notoall",      "n!",        "keeps the current string and all subsequent ones" HELP_TEXT_NEWLINE
                                 "in the file as part of an .incbin"},
   {"preview",      "p",         "previews the current .incbin, 256 bytes at a time"},
+  {"dump",         NULL,        "dumps the current .incbin as text data (in the same format" HELP_TEXT_NEWLINE
+                                "as a preview) into incbin_<start address>.txt"},
+  {"dumpraw",      NULL,        "dumps the data of the current .incbin as a binary file into" HELP_TEXT_NEWLINE
+                                "incbin_<start address>.bin"},
   {NULL,           NULL,        NULL}
 };
 
@@ -452,14 +459,23 @@ int handle_incbin_data (struct incbin * incbin, const unsigned char * data, FILE
   printf("First %hhu bytes:", limit);
   for (p = 0; p < limit; p ++) printf(" %02hhx", data[p]);
   putchar('\n');
-  p = 0x84f;
+  p = 0x384f;
   if (!(incbin -> length & 1)) p |= 0x10;
   if (!(incbin -> length & 2)) p |= 0x20;
   do {
     rv = get_command("Action for current .incbin: ", p);
-    if (rv != 11) break;
-    preview_incbin(data, (offset ++) << 8, incbin -> length);
-    if ((offset << 8) >= incbin -> length) offset = 0;
+    if (rv < 11) break;
+    switch (rv) {
+      case 11:
+        preview_incbin(data, (offset ++) << 8, incbin -> length);
+        if ((offset << 8) >= incbin -> length) offset = 0;
+        break;
+      case 12:
+        dump_incbin_as_text(incbin, data);
+        break;
+      case 13:
+        dump_incbin_as_binary(incbin, data);
+    }
   } while (1);
   switch (rv) {
     case 0:
@@ -600,21 +616,51 @@ void write_incbin_for_segment (const char * file, unsigned offset, unsigned leng
 }
 
 void preview_incbin (const unsigned char * data, unsigned offset, unsigned length) {
-  unsigned char line, amount, p, c;
+  unsigned char line;
   for (line = 0; line < 16; line ++) {
-    printf("%08x: ", offset);
-    amount = ((length - offset) > 16) ? 16 : (length - offset);
-    for (p = 0; p < amount; p ++) printf("%02hhx ", data[offset + p]);
-    for (; p < 16; p ++) printf("   ");
-    for (p = 0; p < amount; p ++) {
-      c = data[offset + p];
-      if ((previewable[c >> 3] >> (c & 7)) & 1)
-        printf("%s", text_table[c]);
-      else
-        putchar('@');
-    }
-    putchar('\n');
+    dump_data_line_as_text(stdout, data, offset, length);
     offset += 16;
     if (offset >= length) break;
   }
+}
+
+void dump_data_line_as_text (FILE * out, const unsigned char * data, unsigned offset, unsigned length) {
+  unsigned char amount, p, c;
+  fprintf(out, "%08x: ", offset);
+  amount = ((length - offset) > 16) ? 16 : (length - offset);
+  for (p = 0; p < amount; p ++) fprintf(out, "%02hhx ", data[offset + p]);
+  for (; p < 16; p ++) fprintf(out, "   ");
+  for (p = 0; p < amount; p ++) {
+    c = data[offset + p];
+    if ((previewable[c >> 3] >> (c & 7)) & 1)
+      fprintf(out, "%s", text_table[c]);
+    else
+      putc('@', out);
+  }
+  putc('\n', out);
+}
+
+void dump_incbin_as_text (struct incbin * incbin, const unsigned char * data) {
+  char filename[20];
+  sprintf(filename, "incbin_%08x.txt", incbin -> offset);
+  FILE * fp = fopen(filename, "w");
+  if (!fp) {
+    printf("err: could not open file %s for writing\n", filename);
+    return;
+  }
+  unsigned offset;
+  for (offset = 0; offset < incbin -> length; offset += 16) dump_data_line_as_text(fp, data, offset, incbin -> length);
+  fclose(fp);
+}
+
+void dump_incbin_as_binary (struct incbin * incbin, const unsigned char * data) {
+  char filename[20];
+  sprintf(filename, "incbin_%08x.bin", incbin -> offset);
+  FILE * fp = fopen(filename, "wb");
+  if (!fp) {
+    printf("err: could not open file %s for writing\n", filename);
+    return;
+  }
+  if (fwrite(data, 1, incbin -> length, fp) != incbin -> length) printf("err: failed writing data to file %s\n", filename);
+  fclose(fp);
 }
