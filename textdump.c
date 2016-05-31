@@ -21,6 +21,7 @@ void output_binary_data(const unsigned char *, unsigned, unsigned char, FILE *);
 char * generate_incbin(const char *, unsigned, unsigned);
 int handle_incbin_text(struct incbin *, const unsigned char *, FILE *);
 void write_incbin_for_segment(const char *, unsigned, unsigned, FILE *);
+void preview_incbin(const unsigned char *, unsigned, unsigned);
 
 struct incbin {
   unsigned offset;
@@ -73,6 +74,9 @@ const char * text_table[] = {
   /* F8 */  "\xe2\xac\x87", "\xe2\xac\x85", "\\l",          "\\p",          "",             "",             "\\n",          "$"
 };
 
+const unsigned char previewable[] = {0xff, 0xfb, 0xff, 0x7e, 0xff, 0x6f, 0x20,    0,    0,    0,    6, 0x3c,    0, 0x81,    0,    0,
+                                        0,    0,    0,    0, 0xfe, 0x7f,    0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f, 0x7f, 0x80};
+
 const char * colors[] = {"TRANSPARENT", "DARK_GREY", "RED", "GREEN", "BLUE", "YELLOW", "CYAN", "MAGENTA",
                          "LIGHT_GRAY", "BLACK", "BLACK2", "SILVER", "WHITE", "SKY_BLUE", "LIGHT_BLUE", "WHITE2"};
 
@@ -94,6 +98,7 @@ struct command commands[] = {
   {"no",           "n",         "keeps the current string as part of an .incbin"},
   {"notoall",      "n!",        "keeps the current string and all subsequent ones" HELP_TEXT_NEWLINE
                                 "in the file as part of an .incbin"},
+  {"preview",      "p",         "previews the current .incbin, 256 bytes at a time"},
   {NULL,           NULL,        NULL}
 };
 
@@ -440,17 +445,23 @@ unsigned get_file_length (FILE * file) {
 }
 
 int handle_incbin_data (struct incbin * incbin, const unsigned char * data, FILE * out) {
-  unsigned char p, limit = 16;
+  unsigned char rv, offset = 0, limit = 16;
+  unsigned p;
   if (incbin -> length < 16) limit = incbin -> length;
   printf("Binary inclusion size: %u\n", incbin -> length);
   printf("First %hhu bytes:", limit);
   for (p = 0; p < limit; p ++) printf(" %02hhx", data[p]);
   putchar('\n');
-  p = 0x4f;
+  p = 0x84f;
   if (!(incbin -> length & 1)) p |= 0x10;
   if (!(incbin -> length & 2)) p |= 0x20;
-  p = get_command("Action for current .incbin: ", p);
-  switch (p) {
+  do {
+    rv = get_command("Action for current .incbin: ", p);
+    if (rv != 11) break;
+    preview_incbin(data, (offset ++) << 8, incbin -> length);
+    if ((offset << 8) >= incbin -> length) offset = 0;
+  } while (1);
+  switch (rv) {
     case 0:
       exit(0);
     case 1:
@@ -459,7 +470,7 @@ int handle_incbin_data (struct incbin * incbin, const unsigned char * data, FILE
       return 1;
     case 3: case 4: case 5:
       write_header_comment(incbin, out);
-      output_binary_data(data, incbin -> length, 1 << (p - 3), out);
+      output_binary_data(data, incbin -> length, 1 << (rv - 3), out);
       return 0;
     case 6:
       write_header_comment(incbin, out);
@@ -586,4 +597,24 @@ void write_incbin_for_segment (const char * file, unsigned offset, unsigned leng
   printf(">>>> %s\n", incbin);
   fprintf(out, "%s\n", incbin);
   free(incbin);
+}
+
+void preview_incbin (const unsigned char * data, unsigned offset, unsigned length) {
+  unsigned char line, amount, p, c;
+  for (line = 0; line < 16; line ++) {
+    printf("%08x: ", offset);
+    amount = ((length - offset) > 16) ? 16 : (length - offset);
+    for (p = 0; p < amount; p ++) printf("%02hhx ", data[offset + p]);
+    for (; p < 16; p ++) printf("   ");
+    for (p = 0; p < amount; p ++) {
+      c = data[offset + p];
+      if ((previewable[c >> 3] >> (c & 7)) & 1)
+        printf("%s", text_table[c]);
+      else
+        putchar('@');
+    }
+    putchar('\n');
+    offset += 16;
+    if (offset >= length) break;
+  }
 }
