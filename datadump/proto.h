@@ -39,6 +39,7 @@ void preview_incbin(const unsigned char *, unsigned, unsigned);
 void dump_incbin_as_text(struct incbin *, const unsigned char *);
 void dump_incbin_as_binary(struct incbin *, const unsigned char *);
 void dump_data_line_as_text(FILE *, const unsigned char *, unsigned, unsigned);
+FILE * get_dump_file(const char *);
 
 // ib_hdr.c
 struct incbin * get_incbin_data(const char *);
