@@ -43,6 +43,6 @@ checking_transform(checkminu, ((unsigned) a) >= ((unsigned) b));
 checking_transform(checkmaxu, ((unsigned) a) <= ((unsigned) b));
 checking_transform(checkmin, a >= b);
 checking_transform(checkmax, a <= b);
-checking_transform(checkptr, ((a & 0xfe000000) == 0x08000000) || ((a & 0xfffc0000) == 0x02000000) || ((a & 0xffff8000) == 0x03000000) || ~(a || b));
+checking_transform(checkptr, ((a & 0xfe000000) == 0x08000000) || ((a & 0xfffc0000) == 0x02000000) || ((a & 0xffff8000) == 0x03000000) || !(a || b));
 checking_transform(require, a == b);
 checking_transform(requirenot, a != b);
