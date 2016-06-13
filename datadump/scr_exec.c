@@ -33,7 +33,16 @@ char ** execute_script_once (struct incbin * incbin, const void * data, char ** 
           current_line ++;
           break;
         }
-        for (next_line = current_line + 1; (next_line < line_count) && (get_line_type(script_lines[next_line]) != 3); next_line ++);
+        count = 1;
+        for (next_line = current_line + 1; next_line < line_count; next_line ++) {
+          line_type = get_line_type(script_lines[next_line]);
+          if (line_type == 2)
+            count ++;
+          else if (line_type == 3) {
+            count --;
+            if (!count) break;
+          }
+        }
         if (next_line >= line_count) {
           *error = generate_script_error(duplicate_string("unmatched start of loop"), current_line + 1);
           break;
