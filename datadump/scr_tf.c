@@ -60,9 +60,10 @@ char * script_get_initializer_value (const char * initializer, struct script_val
     *value = initial_value;
     return NULL;
   }
-  if (!initial_value.type || (initial_value.type > 3))
+  if (!initial_value.type || (initial_value.type > 3)) {
+    destroy_script_value(initial_value);
     return duplicate_string("type mismatch");
-  else if (initial_value.value < 0)
+  } else if (initial_value.value < 0)
     return duplicate_string("negative read amount");
   if (!(vars -> count) || **(vars -> names))
     return duplicate_string("internal state error: $ not found");
