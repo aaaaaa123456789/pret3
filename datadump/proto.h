@@ -83,7 +83,7 @@ char * script_get_transforms_for_line(char **, struct script_variables *, struct
 struct script_variables * init_script_variables(struct incbin *, const unsigned char *, unsigned);
 struct script_value * find_script_variable(struct script_variables *, const char *);
 void destroy_script_value(struct script_value);
-void assign_script_variable(struct script_variables *, const char *, struct script_value);
+void assign_script_value(struct script_variables *, const char *, struct script_value);
 void destroy_script_variables(struct script_variables *);
 struct script_value copy_script_value(struct script_value);
 int validate_variable_name(const char *);
