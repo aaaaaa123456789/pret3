@@ -77,6 +77,7 @@ struct command commands[] = {
 struct transform transforms[] = {
   transform_entry(add),
   transform_entry(and),
+  transform_entry(append),
   transform_entry(asr),
   transform_entry(bytesuntil),
   transform_entry(byteswhile),

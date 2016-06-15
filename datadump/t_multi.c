@@ -45,14 +45,47 @@ char * script_transform_multiXX (struct script_value value, int parameter, struc
 }
 
 char * script_transform_multi8 (struct script_value value, int parameter, struct script_value * result) {
+  if (value.type && (value.type < 4)) {
+    result -> type = 5;
+    result -> value = parameter;
+    result -> data = NULL;
+    if (parameter < 0) return duplicate_string("negative item count");
+    signed char * data8 = malloc(parameter);
+    unsigned p;
+    for (p = 0; p < parameter; p ++) data8[p] = value.value;
+    result -> data = data8;
+    return NULL;
+  }
   return script_transform_multiXX(value, parameter, result, 1);
 }
 
 char * script_transform_multi16 (struct script_value value, int parameter, struct script_value * result) {
+  if (value.type && (value.type < 4)) {
+    result -> type = 6;
+    result -> value = parameter;
+    result -> data = NULL;
+    if (parameter < 0) return duplicate_string("negative item count");
+    short * data16 = malloc(parameter * sizeof(short));
+    unsigned p;
+    for (p = 0; p < parameter; p ++) data16[p] = value.value;
+    result -> data = data16;
+    return NULL;
+  }
   return script_transform_multiXX(value, parameter, result, 2);
 }
 
 char * script_transform_multi32 (struct script_value value, int parameter, struct script_value * result) {
+  if (value.type && (value.type < 4)) {
+    result -> type = 7;
+    result -> value = parameter;
+    result -> data = NULL;
+    if (parameter < 0) return duplicate_string("negative item count");
+    int * data32 = malloc(parameter * sizeof(int));
+    unsigned p;
+    for (p = 0; p < parameter; p ++) data32[p] = value.value;
+    result -> data = data32;
+    return NULL;
+  }
   return script_transform_multiXX(value, parameter, result, 4);
 }
 
