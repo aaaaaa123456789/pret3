@@ -97,6 +97,7 @@ struct transform transforms[] = {
   transform_entry(item),
   transform_entry(length),
   transform_entry(modulo),
+  transform_entry(multi),
   transform_entry(multi8),
   transform_entry(multi16),
   transform_entry(multi32),

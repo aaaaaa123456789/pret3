@@ -50,6 +50,10 @@ char * script_get_initializer_value (const char * initializer, struct script_val
     struct script_value * pinit = find_script_variable(vars, initializer + 1);
     if (!pinit) return duplicate_string("variable does not exist");
     initial_value = copy_script_value(*pinit);
+  } else if (init_read && !*initializer) {
+    initial_value.data = NULL;
+    initial_value.type = 3;
+    initial_value.value = vars -> values -> value;
   } else {
     initial_value.data = NULL;
     initial_value.type = 3;
@@ -74,6 +78,7 @@ char * script_get_initializer_value (const char * initializer, struct script_val
   error = script_transform_skip(*(vars -> values), initial_value.value, &initial_value);
   if (error) {
     destroy_script_value(*value);
+    value -> data = NULL;
     return error;
   }
   assign_script_value(vars, "", initial_value);

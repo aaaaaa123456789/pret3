@@ -130,10 +130,11 @@ char * script_transform_int(struct script_value, int, struct script_value *);
 char * script_transform_length(struct script_value, int, struct script_value *);
 
 // t_multi.c
-char * script_transform_multi(struct script_value, int, struct script_value *, unsigned char);
+char * script_transform_multiXX(struct script_value, int, struct script_value *, unsigned char);
 char * script_transform_multi8(struct script_value, int, struct script_value *);
 char * script_transform_multi16(struct script_value, int, struct script_value *);
 char * script_transform_multi32(struct script_value, int, struct script_value *);
+char * script_transform_multi(struct script_value, int, struct script_value *);
 
 // t_text.c
 char * script_transform_text(struct script_value, int, struct script_value *);

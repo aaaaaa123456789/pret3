@@ -1,6 +1,6 @@
 #include "proto.h"
 
-char * script_transform_multi (struct script_value value, int parameter, struct script_value * result, unsigned char width) {
+char * script_transform_multiXX (struct script_value value, int parameter, struct script_value * result, unsigned char width) {
   result -> data = NULL;
   result -> value = parameter;
   if (parameter < 0)
@@ -45,13 +45,24 @@ char * script_transform_multi (struct script_value value, int parameter, struct 
 }
 
 char * script_transform_multi8 (struct script_value value, int parameter, struct script_value * result) {
-  return script_transform_multi(value, parameter, result, 1);
+  return script_transform_multiXX(value, parameter, result, 1);
 }
 
 char * script_transform_multi16 (struct script_value value, int parameter, struct script_value * result) {
-  return script_transform_multi(value, parameter, result, 2);
+  return script_transform_multiXX(value, parameter, result, 2);
 }
 
 char * script_transform_multi32 (struct script_value value, int parameter, struct script_value * result) {
-  return script_transform_multi(value, parameter, result, 4);
+  return script_transform_multiXX(value, parameter, result, 4);
+}
+
+char * script_transform_multi (struct script_value value, int parameter, struct script_value * result) {
+  result -> data = NULL;
+  if (value.type)
+    return duplicate_string("type mismatch");
+  else if ((parameter != 1) && (parameter != 2) && (parameter != 4))
+    return duplicate_string("parameter must be 1, 2 or 4");
+  else if (value.value & (parameter - 1))
+    return duplicate_string("data length is not aligned");
+  return script_transform_multiXX(value, value.value / parameter, result, parameter);
 }
