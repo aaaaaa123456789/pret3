@@ -33,6 +33,31 @@ int run_script (struct incbin * incbin, const void * data, FILE * out) {
   return 1;
 }
 
+int run_script_auto (struct incbin * incbin, const void * data, const char * script_file, FILE * out) {
+  char ** script_lines = NULL;
+  char * error = NULL;
+  FILE * script = fopen(script_file, "r");
+  if (!script) goto error;
+  script_lines = read_file_by_lines(script);
+  fclose(script);
+  char ** output_lines = execute_script(incbin, data, script_lines, &error);
+  if (error) goto error;
+  write_header_comment(incbin, out);
+  char ** line;
+  for (line = output_lines; *line; line ++) {
+    printf(">>>> %s\n", *line);
+    fprintf(out, "%s\n", *line);
+  }
+  destroy_string_array(output_lines);
+  destroy_string_array(script_lines);
+  return 0;
+  error:
+  destroy_string_array(script_lines);
+  printf("err: %s\n", error);
+  free(error);
+  return 1;
+}
+
 char ** execute_script (struct incbin * incbin, const void * data, char ** script_lines, char ** error) {
   unsigned data_position = 0;
   char ** lines = calloc(sizeof(char *), 1);

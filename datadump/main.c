@@ -27,6 +27,7 @@ void dump_incbins (FILE * in, FILE * out, const char * root) {
   char * line;
   struct incbin * incbin;
   int done = 0;
+  char * script_file = NULL;
   while (!feof(in)) {
     line = read_line(in);
     if ((!done) && is_incbin(line)) {
@@ -36,7 +37,7 @@ void dump_incbins (FILE * in, FILE * out, const char * root) {
         printf(">>>> %s\n", line);
         fprintf(out, "%s\n", line);
       } else {
-        switch (parse_incbin(incbin, root, out)) {
+        switch (parse_incbin(incbin, root, out, &script_file)) {
           case 3:
             done = 1;
             break;
@@ -54,4 +55,5 @@ void dump_incbins (FILE * in, FILE * out, const char * root) {
     }
     free(line);
   }
+  free(script_file);
 }

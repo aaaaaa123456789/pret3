@@ -1,6 +1,6 @@
 #include "proto.h"
 
-int parse_incbin (struct incbin * incbin, const char * directory, FILE * out) {
+int parse_incbin (struct incbin * incbin, const char * directory, FILE * out, char ** script_file) {
   char * location = malloc(1);
   *location = 0;
   unsigned p = 0;
@@ -41,7 +41,10 @@ int parse_incbin (struct incbin * incbin, const char * directory, FILE * out) {
     return 1;
   }
   fclose(data_file);
-  rv = handle_incbin_data(incbin, buffer, out);
+  if (*script_file)
+    rv = run_script_auto(incbin, buffer, *script_file, out);
+  else
+    rv = handle_incbin_data(incbin, buffer, out, script_file);
   free(buffer);
   return rv;
 }

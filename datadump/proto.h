@@ -32,7 +32,7 @@ extern struct transform transforms[];
 void output_binary_data(const unsigned char *, unsigned, unsigned char, FILE *);
 
 // ib_cmd.c
-int handle_incbin_data(struct incbin *, const unsigned char *, FILE *);
+int handle_incbin_data(struct incbin *, const unsigned char *, FILE *, char **);
 void preview_incbin(const unsigned char *, unsigned, unsigned);
 
 // ib_dump.c
@@ -49,7 +49,7 @@ char * generate_incbin(const char *, unsigned, unsigned);
 void write_incbin_for_segment(const char *, unsigned, unsigned, FILE *);
 
 // ib_parse.c
-int parse_incbin(struct incbin *, const char *, FILE *);
+int parse_incbin(struct incbin *, const char *, FILE *, char **);
 
 // ib_text.c
 int handle_incbin_text(struct incbin *, const unsigned char *, FILE *);
@@ -64,6 +64,7 @@ unsigned char get_line_type(const char *);
 
 // scr_core.c
 int run_script(struct incbin *, const void *, FILE *);
+int run_script_auto(struct incbin *, const void *, const char *, FILE *);
 char ** execute_script(struct incbin *, const void *, char **, char **);
 
 // scr_exec.c

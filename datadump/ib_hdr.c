@@ -6,7 +6,6 @@ struct incbin * get_incbin_data (const char * line) {
     printf("err: no filename specified\n");
     return NULL;
   }
-  char * filename;
   pos ++;
   const char * end = strchr(pos, '"');
   if (!end) {

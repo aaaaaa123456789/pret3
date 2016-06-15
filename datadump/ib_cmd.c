@@ -1,6 +1,6 @@
 #include "proto.h"
 
-int handle_incbin_data (struct incbin * incbin, const unsigned char * data, FILE * out) {
+int handle_incbin_data (struct incbin * incbin, const unsigned char * data, FILE * out, char ** script_file) {
   unsigned char rv, offset = 0, limit = 16;
   unsigned p;
   if (incbin -> length < 16) limit = incbin -> length;
@@ -8,7 +8,7 @@ int handle_incbin_data (struct incbin * incbin, const unsigned char * data, FILE
   printf("First %hhu bytes:", limit);
   for (p = 0; p < limit; p ++) printf(" %02hhx", data[p]);
   putchar('\n');
-  p = 0x784f;
+  p = 0xf84f;
   if (!(incbin -> length & 1)) p |= 0x10;
   if (!(incbin -> length & 2)) p |= 0x20;
   do {
@@ -27,6 +27,16 @@ int handle_incbin_data (struct incbin * incbin, const unsigned char * data, FILE
         break;
       case 14:
         if (run_script(incbin, data, out)) return 0;
+        break;
+      case 15:
+        printf("Script file: ");
+        *script_file = read_line(stdin);
+        if (!**script_file) {
+          free(*script_file);
+          *script_file = NULL;
+          break;
+        }
+        return run_script_auto(incbin, data, *script_file, out);
     }
   } while (1);
   switch (rv) {

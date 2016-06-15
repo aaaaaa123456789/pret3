@@ -63,10 +63,12 @@ struct command commands[] = {
                                 "in the file as part of an .incbin"},
   {"preview",      "p",         "previews the current .incbin, 256 bytes at a time"},
   {"dump",         NULL,        "dumps the current .incbin as text data (in the same format" HELP_TEXT_NEWLINE
-                                "as a preview) into incbin_<start address>.txt"},
-  {"dumpraw",      NULL,        "dumps the data of the current .incbin as a binary file into" HELP_TEXT_NEWLINE
-                                "incbin_<start address>.bin"},
+                                "as a preview) into a file"},
+  {"dumpraw",      NULL,        "dumps the data of the current .incbin into a binary file"},
   {"script",       NULL,        "executes a user-defined script on the current .incbin"},
+  {"scriptall",    NULL,        "executes a user-defined script on every remaining .incbin" HELP_TEXT_NEWLINE
+                                "in the input, outputting the results or preserving the" HELP_TEXT_NEWLINE
+                                "original .incbin on script error"},
   {NULL,           NULL,        NULL}
 };
 

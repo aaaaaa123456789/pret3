@@ -72,6 +72,7 @@ unsigned string_array_size (char ** array) {
 }
 
 void destroy_string_array (char ** array) {
+  if (!array) return;
   char ** current;
   for (current = array; *current; current ++) free(*current);
   free(array);
