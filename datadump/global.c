@@ -109,6 +109,8 @@ struct transform transforms[] = {
   transform_entry(require),
   transform_entry(requirenot),
   transform_entry(rmod),
+  transform_entry(rotate),
+  transform_entry(rotateback),
   transform_entry(rsub),
   transform_entry(shl),
   transform_entry(shr),

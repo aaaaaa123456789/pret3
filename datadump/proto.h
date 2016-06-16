@@ -106,6 +106,8 @@ char * parse_buffer(const unsigned char *, unsigned);
 // t_array.c
 char * script_transform_append(struct script_value, int, struct script_value *);
 char * script_transform_prepend(struct script_value, int, struct script_value *);
+char * script_transform_rotate(struct script_value, int, struct script_value *);
+char * script_transform_rotateback(struct script_value, int, struct script_value *);
 
 // t_basic.c
 #include "tbproto.h"
