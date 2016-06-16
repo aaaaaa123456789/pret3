@@ -104,6 +104,7 @@ struct transform transforms[] = {
   transform_entry(multi32),
   transform_entry(multiply),
   transform_entry(or),
+  transform_entry(prepend),
   transform_entry(rdiv),
   transform_entry(require),
   transform_entry(requirenot),

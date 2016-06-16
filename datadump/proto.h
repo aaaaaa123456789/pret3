@@ -123,6 +123,7 @@ char * script_transform_skip(struct script_value, int, struct script_value *);
 char * script_transform_item(struct script_value, int, struct script_value *);
 char * script_transform_copy(struct script_value, int, struct script_value *);
 char * script_transform_append(struct script_value, int, struct script_value *);
+char * script_transform_prepend(struct script_value, int, struct script_value *);
 
 // t_int.c
 char * script_transform_int(struct script_value, int, struct script_value *);
