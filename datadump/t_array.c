@@ -62,12 +62,12 @@ char * script_transform_rotate (struct script_value value, int parameter, struct
   result -> type = value.type;
   result -> value = value.value;
   result -> data = NULL;
-  if (value.type < 5) return duplicate_string("type mismatch");
+  if (value.type && (value.type < 5)) return duplicate_string("type mismatch");
   parameter %= value.value;
   if (parameter < 0) parameter += value.value;
   unsigned size_factor;
   switch (value.type) {
-    case 5: size_factor = 1; break;
+    case 0: case 5: size_factor = 1; break;
     case 6: size_factor = sizeof(short); break;
     case 7: size_factor = sizeof(int);
   }
