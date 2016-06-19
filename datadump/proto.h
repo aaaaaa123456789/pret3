@@ -128,6 +128,10 @@ int read_32(const unsigned char *);
 char * script_transform_skip(struct script_value, int, struct script_value *);
 char * script_transform_item(struct script_value, int, struct script_value *);
 char * script_transform_copy(struct script_value, int, struct script_value *);
+char * script_transform_count_values(struct script_value, int, struct script_value *, int);
+char * script_transform_count(struct script_value, int, struct script_value *);
+char * script_transform_any(struct script_value, int, struct script_value *);
+char * script_transform_all(struct script_value, int, struct script_value *);
 
 // t_int.c
 char * script_transform_int(struct script_value, int, struct script_value *);

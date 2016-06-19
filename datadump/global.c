@@ -76,7 +76,9 @@ struct command commands[] = {
 
 struct transform transforms[] = {
   transform_entry(add),
+  transform_entry(all),
   transform_entry(and),
+  transform_entry(any),
   transform_entry(append),
   transform_entry(asr),
   transform_entry(bytesuntil),
@@ -89,6 +91,7 @@ struct transform transforms[] = {
   transform_entry(compare),
   transform_entry(compareu),
   transform_entry(copy),
+  transform_entry(count),
   transform_entry(divide),
   transform_entry(forcemax),
   transform_entry(forcemaxu),
