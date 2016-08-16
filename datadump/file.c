@@ -6,6 +6,7 @@ char * read_line (FILE * file) {
   unsigned length = 0;
   while (1) {
     character = getc(file);
+    if (character == '\r') continue;
     if ((character == EOF) || (character == '\n')) break;
     result = realloc(result, length + 1);
     result[length ++] = character;
