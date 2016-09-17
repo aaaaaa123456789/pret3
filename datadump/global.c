@@ -1,6 +1,11 @@
 #define ___NO_DEFINE_VARS
 #include "proto.h"
 
+struct settings global_settings = {
+  .insert_replacement_comment = 1,
+  .indent_lines = 0
+};
+
 const char * text_table[] = {
   //        0 / 8           1 / 9           2 / A           3 / B           4 / C           5 / D           6 / E           7 / F
   /* 00 */  " ",            "\xc3\x80",     "\xc3\x81",     "\xc3\x82",     "\xc3\x87",     "\xc3\x88",     "\xc3\x89",     "\xc3\x8a",
@@ -69,7 +74,16 @@ struct command commands[] = {
   {"scriptall",    NULL,        "executes a user-defined script on every remaining .incbin" HELP_TEXT_NEWLINE
                                 "in the input, outputting the results or preserving the" HELP_TEXT_NEWLINE
                                 "original .incbin on script error"},
+  {"settings",     "set",       "enters settings and configuration mode"},
   {NULL,           NULL,        NULL}
+};
+
+struct setting_entry setting_entries[] = {
+  {"headers",      &headers_setting_handler,    "enables or disables the initial @replacing .incbin header." HELP_TEXT_NEWLINE
+                                                "Valid values are on and off."},
+  {"indent",       &indent_setting_handler,     "changes the indentation with which new content is written to" HELP_TEXT_NEWLINE
+                                                "the output. Valid values are 0-9, tab and none."},
+  {NULL,           NULL,                        NULL}
 };
 
 #define transform_entry(name) {#name, &script_transform_ ## name}

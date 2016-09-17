@@ -68,7 +68,10 @@ char * generate_incbin (const char * file, unsigned offset, unsigned length) {
 void write_incbin_for_segment (const char * file, unsigned offset, unsigned length, FILE * out) {
   if (!length) return;
   char * incbin = generate_incbin(file, offset, length);
-  printf(">>>> %s\n", incbin);
-  fprintf(out, "%s\n", incbin);
+  char * indent;
+  generate_initial_indented_line(&indent, NULL);
+  printf(">>>> %s%s\n", indent, incbin);
+  fprintf(out, "%s%s\n", indent, incbin);
   free(incbin);
+  free(indent);
 }

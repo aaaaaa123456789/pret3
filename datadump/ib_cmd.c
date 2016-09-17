@@ -8,7 +8,7 @@ int handle_incbin_data (struct incbin * incbin, const unsigned char * data, FILE
   printf("First %hhu bytes:", limit);
   for (p = 0; p < limit; p ++) printf(" %02hhx", data[p]);
   putchar('\n');
-  p = 0xf84f;
+  p = 0x1f84f;
   if (!(incbin -> length & 1)) p |= 0x10;
   if (!(incbin -> length & 2)) p |= 0x20;
   do {
@@ -37,6 +37,8 @@ int handle_incbin_data (struct incbin * incbin, const unsigned char * data, FILE
           break;
         }
         return run_script_auto(incbin, data, *script_file, out);
+      case 16:
+        settings_mode();
     }
   } while (1);
   switch (rv) {
@@ -47,11 +49,11 @@ int handle_incbin_data (struct incbin * incbin, const unsigned char * data, FILE
     case 2:
       return 1;
     case 3: case 4: case 5:
-      write_header_comment(incbin, out);
+      if (global_settings.insert_replacement_comment) write_header_comment(incbin, out);
       output_binary_data(data, incbin -> length, 1 << (rv - 3), out);
       return 0;
     case 6:
-      write_header_comment(incbin, out);
+      if (global_settings.insert_replacement_comment) write_header_comment(incbin, out);
       return handle_incbin_text(incbin, data, out);
   }
 }

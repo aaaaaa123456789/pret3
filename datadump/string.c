@@ -81,3 +81,18 @@ void destroy_string_array (char ** array) {
 const char * find_first_non_space (const char * string) {
   return string + strspn(string, " \t");
 }
+
+void generate_initial_indented_line (char ** string, unsigned * length) {
+  unsigned current_length;
+  if (global_settings.indent_lines >= 10) {
+    *string = malloc(2);
+    **string = '\t';
+    1[*string] = 0;
+    if (length) *length = 1;
+    return;
+  }
+  *string = malloc(global_settings.indent_lines + 1);
+  for (current_length = 0; current_length < global_settings.indent_lines; current_length ++) current_length[*string] = ' ';
+  current_length[*string] = 0;
+  if (length) *length = current_length;
+}

@@ -23,12 +23,15 @@ int run_script (struct incbin * incbin, const void * data, FILE * out) {
     free(error);
     return 0;
   }
-  write_header_comment(incbin, out);
+  if (global_settings.insert_replacement_comment) write_header_comment(incbin, out);
   char ** line;
+  char * indent;
+  generate_initial_indented_line(&indent, NULL);
   for (line = output_lines; *line; line ++) {
-    printf(">>>> %s\n", *line);
-    fprintf(out, "%s\n", *line);
+    printf(">>>> %s%s\n", indent, *line);
+    fprintf(out, "%s%s\n", indent, *line);
   }
+  free(indent);
   destroy_string_array(output_lines);
   return 1;
 }
@@ -42,12 +45,15 @@ int run_script_auto (struct incbin * incbin, const void * data, const char * scr
   fclose(script);
   char ** output_lines = execute_script(incbin, data, script_lines, &error);
   if (error) goto error;
-  write_header_comment(incbin, out);
+  if (global_settings.insert_replacement_comment) write_header_comment(incbin, out);
   char ** line;
+  char * indent;
+  generate_initial_indented_line(&indent, NULL);
   for (line = output_lines; *line; line ++) {
-    printf(">>>> %s\n", *line);
-    fprintf(out, "%s\n", *line);
+    printf(">>>> %s%s\n", indent, *line);
+    fprintf(out, "%s%s\n", indent, *line);
   }
+  free(indent);
   destroy_string_array(output_lines);
   destroy_string_array(script_lines);
   return 0;

@@ -14,9 +14,7 @@ void output_binary_data (const unsigned char * data, unsigned length, unsigned c
     strcpy(header, ".byte");
   sprintf(fmtstring, "0x%%0%hhux", width << 1);
   while (length) {
-    output_line = malloc(1);
-    *output_line = 0;
-    output_length = 0;
+    generate_initial_indented_line(&output_line, &output_length);
     if (length > 32)
       n = 32;
     else

@@ -20,11 +20,13 @@ char ** read_file_by_lines(FILE *);
 
 // global.c
 #ifndef ___NO_DEFINE_VARS
+extern struct settings global_settings;
 extern const char * text_table[];
 extern const unsigned char previewable[];
 extern const char * colors[];
 extern const char * buffers[];
 extern struct command commands[];
+extern struct setting_entry setting_entries[];
 extern struct transform transforms[];
 #endif
 
@@ -90,6 +92,12 @@ void destroy_script_variables(struct script_variables *);
 struct script_value copy_script_value(struct script_value);
 int validate_variable_name(const char *);
 
+// settings.c
+void settings_mode(void);
+void settings_help(void);
+char * headers_setting_handler(const char *);
+char * indent_setting_handler(const char *);
+
 // string.c
 unsigned get_value_from_string(const char *, unsigned);
 int convert_string_to_number(const char *, int);
@@ -99,6 +107,7 @@ char ** split_by_spaces(const char *);
 unsigned string_array_size(char **);
 void destroy_string_array(char **);
 const char * find_first_non_space(const char *);
+void generate_initial_indented_line(char **, unsigned *);
 
 // txtparse.c
 char * parse_buffer(const unsigned char *, unsigned);
