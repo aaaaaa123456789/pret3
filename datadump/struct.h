@@ -41,4 +41,21 @@ struct transform {
 struct settings {
   unsigned insert_replacement_comment: 1;
   unsigned indent_lines: 4; // 0-9: amount of spaces, 15: one tab
+  unsigned code_labels: 1;
+  unsigned data_labels: 2; // 0: off, 1: exact, 2: offset
+};
+
+struct ELF_section {
+  unsigned type; // 2: symbol table
+  unsigned offset;
+  unsigned size;
+  unsigned link; // for symbol table sections, related string table section
+  unsigned entry_size;
+};
+
+struct ELF_symbol {
+  unsigned value;
+  unsigned size;
+  unsigned char type; // 1: data pointer, 2: function pointer
+  char name[];
 };

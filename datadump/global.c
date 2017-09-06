@@ -3,7 +3,9 @@
 
 struct settings global_settings = {
   .insert_replacement_comment = 1,
-  .indent_lines = 0
+  .indent_lines = 0,
+  .code_labels = 1,
+  .data_labels = 2
 };
 
 const char * text_table[] = {
@@ -59,6 +61,7 @@ struct command commands[] = {
   {"data8",        NULL,        "outputs the current file as a series of 8-bit values"},
   {"data16",       NULL,        "outputs the current file as a series of 16-bit values"},
   {"data32",       NULL,        "outputs the current file as a series of 32-bit values"},
+  {"dataptr",      NULL,        "outputs the current file as a series of pointers"},
   {"textscan",     "t",         "scans the current file for text strings to output"},
   {"yes",          "y",         "preserves the current string as a .string"},
   {"yestoall",     "y!",        "preserves the current string and all subsequent" HELP_TEXT_NEWLINE
@@ -75,15 +78,23 @@ struct command commands[] = {
                                 "in the input, outputting the results or preserving the" HELP_TEXT_NEWLINE
                                 "original .incbin on script error"},
   {"settings",     "set",       "enters settings and configuration mode"},
+  {"loadsym",      "ls",        "loads symbol data from an ELF file"},
+  {"unloadsym",    "us",        "unloads the currently loaded symbol data"},
   {NULL,           NULL,        NULL}
 };
 
 struct setting_entry setting_entries[] = {
-  {"headers",      &headers_setting_handler,    "enables or disables the initial @replacing .incbin header." HELP_TEXT_NEWLINE
-                                                "Valid values are on and off."},
-  {"indent",       &indent_setting_handler,     "changes the indentation with which new content is written to" HELP_TEXT_NEWLINE
-                                                "the output. Valid values are 0-9, tab and none."},
-  {NULL,           NULL,                        NULL}
+  {"headers",      &headers_setting_handler,     "enables or disables the initial @replacing .incbin header." HELP_TEXT_NEWLINE
+                                                 "Valid values are on and off."},
+  {"indent",       &indent_setting_handler,      "changes the indentation with which new content is written to" HELP_TEXT_NEWLINE
+                                                 "the output. Valid values are 0-9, tab and none."},
+  {"codelabels",   &code_labels_setting_handler, "determines whether dataptr will replace code pointers with" HELP_TEXT_NEWLINE
+                                                 "the corresponding function labels after symbols have been" HELP_TEXT_NEWLINE
+                                                 "loaded. Valid values are on and off."},
+  {"datalabels",   &data_labels_setting_handler, "determines whether dataptr will replace data pointers with" HELP_TEXT_NEWLINE
+                                                 "labels after symbols have been loaded. Valid values are off," HELP_TEXT_NEWLINE
+                                                 "exact (only exact matches) and on (using label + offset)."},
+  {NULL,           NULL,                         NULL}
 };
 
 #define transform_entry(name) {#name, &script_transform_ ## name}
@@ -137,3 +148,6 @@ struct transform transforms[] = {
   transform_entry(xor),
   {NULL, NULL}
 };
+
+struct ELF_symbol ** global_symbol_table = NULL;
+unsigned global_symbol_count = 0;

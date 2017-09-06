@@ -38,3 +38,58 @@ char ** read_file_by_lines (FILE * file) {
   lines[line_count] = NULL;
   return lines;
 }
+
+void * read_file_buffer (FILE * file, unsigned offset, unsigned length, const char ** error) {
+  *error = NULL;
+  if (!length) return NULL;
+  if (fseek(file, offset, 0)) {
+    *error = "could not seek to offset";
+    return NULL;
+  }
+  void * result = malloc(length);
+  int rv = fread(result, 1, length, file);
+  if (rv != length) {
+    *error = rv ? "premature end of file" : "could not read file";
+    free(result);
+    return NULL;
+  }
+  return result;
+}
+
+unsigned long long read_file_value (FILE * file, unsigned offset, unsigned char size, const char ** error) {
+  *error = NULL;
+  if (!size) return 0;
+  if (size > sizeof(unsigned long long)) {
+    *error = "invalid value size";
+    return 0;
+  }
+  unsigned char * buffer = read_file_buffer(file, offset, size, error);
+  if (*error) return 0;
+  unsigned result = 0;
+  unsigned char pos;
+  for (pos = 0; pos < size; pos ++) result |= ((unsigned) buffer[pos]) << (pos << 3);
+  free(buffer);
+  return result;
+}
+
+char * read_file_string (FILE * file, unsigned offset, const char ** error) {
+  if (fseek(file, offset, 0)) {
+    *error = "could not seek to offset";
+    return NULL;
+  }
+  char * result = NULL;
+  unsigned length = 0;
+  int c;
+  do {
+    c = getc(file);
+    if (c == EOF) {
+      *error = length ? "premature end of file" : "could not read file";
+      free(result);
+      return NULL;
+    }
+    result = realloc(result, length + 1);
+    result[length ++] = c;
+  } while (c);
+  *error = NULL;
+  return result;
+}

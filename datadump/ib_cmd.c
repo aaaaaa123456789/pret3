@@ -8,27 +8,28 @@ int handle_incbin_data (struct incbin * incbin, const unsigned char * data, FILE
   printf("First %hhu bytes:", limit);
   for (p = 0; p < limit; p ++) printf(" %02hhx", data[p]);
   putchar('\n');
-  p = 0x1f84f;
+  p = 0x7f08f;
   if (!(incbin -> length & 1)) p |= 0x10;
-  if (!(incbin -> length & 2)) p |= 0x20;
+  if (!(incbin -> length & 2)) p |= validate_pointers(data, incbin -> length) ? 0x60 : 0x20;
+  if (global_symbol_table) p |= 0x80000;
   do {
     rv = get_command("Action for current .incbin: ", p);
-    if (rv < 11) break;
+    if (rv < 12) break;
     switch (rv) {
-      case 11:
+      case 12:
         preview_incbin(data, (offset ++) << 8, incbin -> length);
         if ((offset << 8) >= incbin -> length) offset = 0;
         break;
-      case 12:
+      case 13:
         dump_incbin_as_text(incbin, data);
         break;
-      case 13:
+      case 14:
         dump_incbin_as_binary(incbin, data);
         break;
-      case 14:
+      case 15:
         if (run_script(incbin, data, out)) return 0;
         break;
-      case 15:
+      case 16:
         printf("Script file: ");
         *script_file = read_line(stdin);
         if (!**script_file) {
@@ -37,23 +38,27 @@ int handle_incbin_data (struct incbin * incbin, const unsigned char * data, FILE
           break;
         }
         return run_script_auto(incbin, data, *script_file, out);
-      case 16:
+      case 17:
         settings_mode();
+        break;
+      case 18:
+        load_symbols();
+        break;
+      case 19:
+        unload_symbols();
     }
   } while (1);
+  if (!rv) exit(0);
+  if (rv < 3) return 3 - rv;
+  if (global_settings.insert_replacement_comment) write_header_comment(incbin, out);
   switch (rv) {
-    case 0:
-      exit(0);
-    case 1:
-      return 2;
-    case 2:
-      return 1;
     case 3: case 4: case 5:
-      if (global_settings.insert_replacement_comment) write_header_comment(incbin, out);
       output_binary_data(data, incbin -> length, 1 << (rv - 3), out);
       return 0;
     case 6:
-      if (global_settings.insert_replacement_comment) write_header_comment(incbin, out);
+      output_pointers(data, incbin -> length, out);
+      return 0;
+    case 7:
       return handle_incbin_text(incbin, data, out);
   }
 }

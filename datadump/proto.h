@@ -13,10 +13,22 @@
 unsigned char get_command(const char *, unsigned);
 void print_command_help(unsigned);
 
+// elf.c
+struct ELF_symbol ** read_symbols_from_ELF(const char *, unsigned *, const char **);
+void destroy_ELF_symbols(struct ELF_symbol **, unsigned);
+const char * validate_ELF_file(FILE *);
+const char * validate_file_value(FILE *, unsigned, unsigned, unsigned, const char *);
+struct ELF_section * read_ELF_section_table(FILE *, unsigned *, const char **);
+struct ELF_symbol ** read_ELF_symbols_from_section(FILE *, struct ELF_section, struct ELF_section, unsigned *, const char **);
+int compare_ELF_symbols(const void *, const void *);
+
 // file.c
 char * read_line(FILE *);
 unsigned get_file_length(FILE *);
 char ** read_file_by_lines(FILE *);
+void * read_file_buffer(FILE *, unsigned, unsigned, const char **);
+unsigned long long read_file_value(FILE *, unsigned, unsigned char, const char **);
+char * read_file_string(FILE *, unsigned, const char **);
 
 // global.c
 #ifndef ___NO_DEFINE_VARS
@@ -28,6 +40,8 @@ extern const char * buffers[];
 extern struct command commands[];
 extern struct setting_entry setting_entries[];
 extern struct transform transforms[];
+extern struct ELF_symbol ** global_symbol_table;
+extern unsigned global_symbol_count;
 #endif
 
 // ib_bin.c
@@ -52,6 +66,11 @@ void write_incbin_for_segment(const char *, unsigned, unsigned, FILE *);
 
 // ib_parse.c
 int parse_incbin(struct incbin *, const char *, FILE *, char **);
+
+// ib_ptr.c
+int validate_pointers(const unsigned char *, unsigned);
+void output_pointers(const unsigned char *, unsigned, FILE *);
+void output_pointer(unsigned, FILE *);
 
 // ib_text.c
 int handle_incbin_text(struct incbin *, const unsigned char *, FILE *);
@@ -97,6 +116,8 @@ void settings_mode(void);
 void settings_help(void);
 char * headers_setting_handler(const char *);
 char * indent_setting_handler(const char *);
+char * code_labels_setting_handler(const char *);
+char * data_labels_setting_handler(const char *);
 
 // string.c
 unsigned get_value_from_string(const char *, unsigned);
@@ -108,6 +129,12 @@ unsigned string_array_size(char **);
 void destroy_string_array(char **);
 const char * find_first_non_space(const char *);
 void generate_initial_indented_line(char **, unsigned *);
+
+// symbols.c
+void load_symbols(void);
+void unload_symbols(void);
+struct ELF_symbol * find_symbol_for_address(unsigned);
+struct ELF_symbol * check_exact_symbol_match(unsigned);
 
 // txtparse.c
 char * parse_buffer(const unsigned char *, unsigned);

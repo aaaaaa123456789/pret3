@@ -84,3 +84,33 @@ char * indent_setting_handler (const char * value) {
   result[1] = 0;
   return result;
 }
+
+char * code_labels_setting_handler (const char * value) {
+  unsigned numeric_value;
+  if (!value)
+    numeric_value = global_settings.code_labels;
+  else if (!strcmp(value, "off"))
+    numeric_value = 0;
+  else if (!strcmp(value, "on"))
+    numeric_value = 1;
+  else
+    return NULL;
+  global_settings.code_labels = numeric_value;
+  return duplicate_string(numeric_value ? "on" : "off");
+}
+
+char * data_labels_setting_handler (const char * value) {
+  unsigned numeric_value;
+  if (!value)
+    numeric_value = global_settings.data_labels;
+  else if (!strcmp(value, "off"))
+    numeric_value = 0;
+  else if (!strcmp(value, "exact"))
+    numeric_value = 1;
+  else if (!strcmp(value, "on"))
+    numeric_value = 2;
+  else
+    return NULL;
+  global_settings.data_labels = numeric_value;
+  return duplicate_string(numeric_value ? ((numeric_value == 1) ? "exact" : "on") : "off");
+}
