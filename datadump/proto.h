@@ -13,6 +13,9 @@
 unsigned char get_command(const char *, unsigned);
 void print_command_help(unsigned);
 
+// dumpmain.c
+void dump_incbins(FILE *, FILE *, const char *);
+
 // elf.c
 struct ELF_symbol ** read_symbols_from_ELF(const char *, unsigned *, const char **);
 void destroy_ELF_symbols(struct ELF_symbol **, unsigned);
@@ -77,7 +80,6 @@ int handle_incbin_text(struct incbin *, const unsigned char *, FILE *);
 
 // main.c
 int main(int, char **);
-void dump_incbins(FILE *, FILE *, const char *);
 
 // scr_base.c
 char * script_get_expression_value(const char *, struct script_variables *, int *);
