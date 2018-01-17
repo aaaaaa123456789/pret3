@@ -17,7 +17,8 @@ int main (int argc, char ** argv) {
     fprintf(stderr, "error: could not open file %s for writing\n", argv[2]);
     return 1;
   }
-  dump_incbins(in, out, argv[3]);
+  repository_path = argv[3];
+  dump_incbins(in, out);
   fclose(in);
   fclose(out);
   return 0;

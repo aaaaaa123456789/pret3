@@ -14,7 +14,7 @@ unsigned char get_command(const char *, unsigned);
 void print_command_help(unsigned);
 
 // dumpmain.c
-void dump_incbins(FILE *, FILE *, const char *);
+void dump_incbins(FILE *, FILE *);
 
 // elf.c
 struct ELF_symbol ** read_symbols_from_ELF(const char *, unsigned *, const char **);
@@ -45,6 +45,7 @@ extern struct setting_entry setting_entries[];
 extern struct transform transforms[];
 extern struct ELF_symbol ** global_symbol_table;
 extern unsigned global_symbol_count;
+extern const char * repository_path;
 #endif
 
 // ib_bin.c
@@ -68,7 +69,7 @@ char * generate_incbin(const char *, unsigned, unsigned);
 void write_incbin_for_segment(const char *, unsigned, unsigned, FILE *);
 
 // ib_parse.c
-int parse_incbin(struct incbin *, const char *, FILE *, char **);
+int parse_incbin(struct incbin *, FILE *, char **);
 
 // ib_ptr.c
 int validate_pointers(const unsigned char *, unsigned);

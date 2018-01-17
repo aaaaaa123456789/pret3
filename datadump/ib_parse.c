@@ -1,11 +1,11 @@
 #include "proto.h"
 
-int parse_incbin (struct incbin * incbin, const char * directory, FILE * out, char ** script_file) {
+int parse_incbin (struct incbin * incbin, FILE * out, char ** script_file) {
   char * location = malloc(1);
   *location = 0;
   unsigned p = 0;
   int rv;
-  concatenate(&location, &p, directory, "/", incbin -> file, NULL);
+  concatenate(&location, &p, repository_path, "/", incbin -> file, NULL);
   FILE * data_file = fopen(location, "rb");
   free(location);
   if (!data_file) {

@@ -1,6 +1,6 @@
 #include "proto.h"
 
-void dump_incbins (FILE * in, FILE * out, const char * root) {
+void dump_incbins (FILE * in, FILE * out) {
   char * line;
   struct incbin * incbin;
   int done = 0;
@@ -14,7 +14,7 @@ void dump_incbins (FILE * in, FILE * out, const char * root) {
         printf(">>>> %s\n", line);
         fprintf(out, "%s\n", line);
       } else {
-        switch (parse_incbin(incbin, root, out, &script_file)) {
+        switch (parse_incbin(incbin, out, &script_file)) {
           case 3:
             done = 1;
             break;
