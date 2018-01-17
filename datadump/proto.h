@@ -45,7 +45,10 @@ extern struct setting_entry setting_entries[];
 extern struct transform transforms[];
 extern struct ELF_symbol ** global_symbol_table;
 extern unsigned global_symbol_count;
+extern const char * exe_name;
 extern const char * repository_path;
+extern char ** command_line_filenames;
+extern unsigned command_line_filename_count;
 #endif
 
 // ib_bin.c
@@ -81,6 +84,10 @@ int handle_incbin_text(struct incbin *, const unsigned char *, FILE *);
 
 // main.c
 int main(int, char **);
+int single_file_mode(void);
+
+// optparse.c
+int parse_options(char **, unsigned);
 
 // scr_base.c
 char * script_get_expression_value(const char *, struct script_variables *, int *);
