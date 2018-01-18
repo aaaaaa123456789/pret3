@@ -32,6 +32,7 @@ char ** read_file_by_lines(FILE *);
 void * read_file_buffer(FILE *, unsigned, unsigned, const char **);
 unsigned long long read_file_value(FILE *, unsigned, unsigned char, const char **);
 char * read_file_string(FILE *, unsigned, const char **);
+void transfer_temporary_to_file(FILE *);
 
 // global.c
 #ifndef ___NO_DEFINE_VARS
@@ -50,6 +51,7 @@ extern const char * repository_path;
 extern const char * global_script_path;
 extern char ** command_line_filenames;
 extern unsigned command_line_filename_count;
+extern FILE * global_temporary_file;
 #endif
 
 // ib_bin.c
@@ -140,6 +142,7 @@ int convert_string_to_number(const char *, int);
 void concatenate(char **, unsigned *, ...);
 char * duplicate_string(const char *);
 char ** split_by_spaces(const char *);
+char ** split_by(const char *, const char *);
 unsigned string_array_size(char **);
 void destroy_string_array(char **);
 const char * find_first_non_space(const char *);

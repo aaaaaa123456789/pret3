@@ -158,3 +158,5 @@ const char * global_script_path = NULL;
 
 char ** command_line_filenames = NULL; // do not free individual entries!
 unsigned command_line_filename_count = 0;
+
+FILE * global_temporary_file = NULL;

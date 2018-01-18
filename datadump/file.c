@@ -93,3 +93,7 @@ char * read_file_string (FILE * file, unsigned offset, const char ** error) {
   *error = NULL;
   return result;
 }
+
+void transfer_temporary_to_file (FILE * file) {
+  // ...
+}
