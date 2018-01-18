@@ -3,6 +3,10 @@
 int main (int argc, char ** argv) {
   exe_name = *argv;
   int mode = parse_options(argv + 1, argc - 1);
+  if (!repository_path) {
+    fputs("error: repository path not given\n", stderr);
+    return 1;
+  }
   switch (mode) {
     case MODE_INTERACTIVE:
       return interactive_mode();
