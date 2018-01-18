@@ -59,3 +59,12 @@ struct ELF_symbol {
   unsigned char type; // 1: data pointer, 2: function pointer
   char name[];
 };
+
+enum execution_modes {
+  MODE_INTERACTIVE = 0,
+  MODE_AUTO_DATA_8 = 1,
+  MODE_AUTO_DATA_16 = 2,
+  MODE_AUTO_DATA_PTR = 3,
+  MODE_AUTO_DATA_32 = 4,
+  MODE_AUTO_SCRIPT = 5
+};

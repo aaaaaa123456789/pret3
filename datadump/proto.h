@@ -47,6 +47,7 @@ extern struct ELF_symbol ** global_symbol_table;
 extern unsigned global_symbol_count;
 extern const char * exe_name;
 extern const char * repository_path;
+extern const char * script_path;
 extern char ** command_line_filenames;
 extern unsigned command_line_filename_count;
 #endif
@@ -84,10 +85,13 @@ int handle_incbin_text(struct incbin *, const unsigned char *, FILE *);
 
 // main.c
 int main(int, char **);
-int single_file_mode(void);
+int interactive_mode(void);
 
 // optparse.c
 int parse_options(char **, unsigned);
+const char * get_option_argument(char **, unsigned, unsigned *);
+void multiple_execution_mode_error(int);
+int auto_execution_mode(const char *);
 
 // scr_base.c
 char * script_get_expression_value(const char *, struct script_variables *, int *);
@@ -123,6 +127,7 @@ int validate_variable_name(const char *);
 
 // settings.c
 void settings_mode(void);
+void parse_configuration_line(const char *);
 void settings_help(void);
 char * headers_setting_handler(const char *);
 char * indent_setting_handler(const char *);

@@ -4,14 +4,24 @@ int main (int argc, char ** argv) {
   exe_name = *argv;
   int mode = parse_options(argv + 1, argc - 1);
   switch (mode) {
-    case 0:
-      return single_file_mode();
+    case MODE_INTERACTIVE:
+      return interactive_mode();
+    case MODE_AUTO_DATA_8:
+      // ...
+    case MODE_AUTO_DATA_16:
+      // ...
+    case MODE_AUTO_DATA_32:
+      // ...
+    case MODE_AUTO_DATA_PTR:
+      // ...
+    case MODE_AUTO_SCRIPT:
+      // ...
     default:
       return 1;
   }
 }
 
-int single_file_mode (void) {
+int interactive_mode (void) {
   // ...
   FILE * in;
   FILE * out;

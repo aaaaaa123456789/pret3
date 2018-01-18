@@ -42,6 +42,10 @@ void settings_mode (void) {
   }
 }
 
+void parse_configuration_line (const char * line) {
+  // ...
+}
+
 void settings_help (void) {
   unsigned setting_number;
   for (setting_number = 0; setting_entries[setting_number].name; setting_number ++)
