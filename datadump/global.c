@@ -154,7 +154,7 @@ unsigned global_symbol_count = 0;
 
 const char * exe_name = NULL;
 const char * repository_path = NULL;
-const char * script_path = NULL;
+const char * global_script_path = NULL;
 
-char ** command_line_filenames = NULL; // do not free!
+char ** command_line_filenames = NULL; // do not free individual entries!
 unsigned command_line_filename_count = 0;

@@ -7,7 +7,11 @@ int parse_options (char ** options, unsigned count) {
   for (current = 0; current < count; current ++) {
     if (!options[current]) break;
     if (done_options || (*(options[current]) != '-')) {
-      // ...
+      if (repository_path) {
+        command_line_filenames = realloc(command_line_filenames, sizeof(char *) * (command_line_filename_count + 1));
+        command_line_filenames[command_line_filename_count ++] = options[current];
+      } else
+        repository_path = options[current];
     } else if (!strcmp(options[current], "--"))
       done_options = 1;
     else if (!strcmp(options[current], "-a")) {
@@ -15,8 +19,17 @@ int parse_options (char ** options, unsigned count) {
       mode = auto_execution_mode(get_option_argument(options, count, &current));
     } else if (!strcmp(options[current], "-c"))
       parse_configuration_line(get_option_argument(options, count, &current));
-    // ...
-    else {
+    else if (!strcmp(options[current], "-l")) {
+      if (global_symbol_table) {
+        fputs("error: symbols already loaded\n", stderr);
+        exit(1);
+      }
+      preload_symbols(get_option_argument(options, count, &current));
+    } else if (!strcmp(options[current], "-s")) {
+      if (mode) multiple_execution_mode_error(mode);
+      global_script_path = options[current];
+      mode = MODE_AUTO_SCRIPT;
+    } else {
       fprintf(stderr, "error: unknown option: %s\n", options[current]);
       exit(1);
     }

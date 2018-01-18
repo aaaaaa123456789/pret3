@@ -47,7 +47,7 @@ extern struct ELF_symbol ** global_symbol_table;
 extern unsigned global_symbol_count;
 extern const char * exe_name;
 extern const char * repository_path;
-extern const char * script_path;
+extern const char * global_script_path;
 extern char ** command_line_filenames;
 extern unsigned command_line_filename_count;
 #endif
@@ -148,6 +148,7 @@ void generate_initial_indented_line(char **, unsigned *);
 // symbols.c
 void load_symbols(void);
 void unload_symbols(void);
+void preload_symbols(const char *);
 struct ELF_symbol * find_symbol_for_address(unsigned);
 struct ELF_symbol * check_exact_symbol_match(unsigned);
 
