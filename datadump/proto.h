@@ -15,6 +15,7 @@ void print_command_help(unsigned);
 
 // dumpmain.c
 void dump_incbins(FILE *, FILE *);
+void dump_incbins_to_data(FILE *, unsigned char);
 
 // elf.c
 struct ELF_symbol ** read_symbols_from_ELF(const char *, unsigned *, const char **);
@@ -76,6 +77,7 @@ void write_incbin_for_segment(const char *, unsigned, unsigned, FILE *);
 
 // ib_parse.c
 int parse_incbin(struct incbin *, FILE *, char **);
+void * get_incbin_contents(struct incbin *);
 
 // ib_ptr.c
 int validate_pointers(const unsigned char *, unsigned);
