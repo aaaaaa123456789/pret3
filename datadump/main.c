@@ -7,6 +7,10 @@ int main (int argc, char ** argv) {
     fputs("error: repository path not given\n", stderr);
     return 1;
   }
+  if (!command_line_filename_count) {
+    fputs("error: no input files\n", stderr);
+    return 1;
+  }
   switch (mode) {
     case MODE_INTERACTIVE:
       return interactive_mode();
@@ -28,10 +32,6 @@ int main (int argc, char ** argv) {
 int interactive_mode (void) {
   FILE * in;
   FILE * out;
-  if (!command_line_filename_count) {
-    fputs("error: no input files\n", stderr);
-    return 1;
-  }
   if (command_line_filename_count > 2) {
     fputs("error: only a single input and output file can be given in interactive mode\n", stderr);
     return 1;
