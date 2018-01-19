@@ -95,5 +95,31 @@ char * read_file_string (FILE * file, unsigned offset, const char ** error) {
 }
 
 void transfer_temporary_to_file (FILE * file) {
-  // ...
+  // note that the temporary file is always opened in w+b mode by tmpfile(), so seeking and positioning will not be affected by \n to \r\n conversions
+  if (!global_temporary_file) return;
+  int rv = fseek(global_temporary_file, 0, 2);
+  long file_size = -1;
+  if (rv >= 0) file_size = ftell(global_temporary_file);
+  if (file_size != -1) rv = fseek(global_temporary_file, 0, 0);
+  if ((file_size == -1) || (rv < 0)) {
+    fputs("error: could not seek in temporary file\n", stderr);
+    fclose(global_temporary_file); // try to delete it
+    exit(2);
+  }
+  char * buffer = malloc(65536);
+  clearerr(global_temporary_file);
+  clearerr(file);
+  while (!(feof(global_temporary_file) || ferror(global_temporary_file))) {
+    rv = fread(buffer, 1, 65536, global_temporary_file);
+    if (rv < 0) break;
+    if (fwrite(buffer, 1, rv, file) != rv) break;
+  }
+  if (ferror(global_temporary_file) || ferror(file)) {
+    fclose(global_temporary_file);
+    fputs("error: could not write to file\n", stderr);
+    exit(2);
+  }
+  free(buffer);
+  fclose(global_temporary_file);
+  global_temporary_file = NULL;
 }

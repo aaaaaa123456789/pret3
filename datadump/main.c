@@ -66,7 +66,6 @@ int interactive_mode (void) {
       return 2;
     }
     transfer_temporary_to_file(in);
-    fclose(global_temporary_file);
   }
   return 0;
 }
