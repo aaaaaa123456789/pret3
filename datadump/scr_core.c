@@ -18,6 +18,10 @@ int run_script (struct incbin * incbin, const void * data, FILE * out) {
   char * error = NULL;
   char ** output_lines = execute_script(incbin, data, script_lines, &error);
   destroy_string_array(script_lines);
+  return handle_script_output(output_lines, error, incbin, out);
+}
+
+int handle_script_output (char ** output_lines, char * error, struct incbin * incbin, FILE * out) {
   if (error) {
     printf("err: %s\n", error);
     free(error);

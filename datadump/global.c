@@ -153,3 +153,9 @@ struct ELF_symbol ** global_symbol_table = NULL;
 unsigned global_symbol_count = 0;
 
 const char * repository_path = NULL;
+const char * global_script_path = NULL;
+
+char ** command_line_filenames = NULL; // do not free individual entries!
+unsigned command_line_filename_count = 0;
+
+FILE * global_temporary_file = NULL;

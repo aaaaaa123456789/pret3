@@ -28,6 +28,17 @@ void unload_symbols (void) {
   global_symbol_count = 0;
 }
 
+void preload_symbols (const char * file) {
+  // similar in spirit to load_symbols(), but we just fail on exit
+  const char * error;
+  unsigned count;
+  struct ELF_symbol ** symbols = read_symbols_from_ELF(file, &count, &error);
+  if (error) error_exit(1, "could not load symbols from %s: %s", file, error);
+  global_symbol_table = symbols;
+  global_symbol_count = count;
+  printf("sym: %u symbols loaded\n", count);
+}
+
 struct ELF_symbol * find_symbol_for_address (unsigned address) {
   if (!global_symbol_count) return NULL;
   unsigned low = 0, high = global_symbol_count - 1, current;

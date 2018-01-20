@@ -46,19 +46,23 @@ char * duplicate_string (const char * string) {
 }
 
 char ** split_by_spaces (const char * string) {
+  return split_by(string, " \t");
+}
+
+char ** split_by (const char * string, const char * delimiters) {
   if (!string) return NULL;
   char ** result = NULL;
   unsigned length, count = 0;
-  string += strspn(string, " \t");
+  string += strspn(string, delimiters);
   while (*string) {
-    length = strcspn(string, " \t");
+    length = strcspn(string, delimiters);
     result = realloc(result, sizeof(char **) * (count + 1));
     result[count] = malloc(length + 1);
     memcpy(result[count], string, length);
     result[count][length] = 0;
     count ++;
     string += length;
-    string += strspn(string, " \t");
+    string += strspn(string, delimiters);
   }
   result = realloc(result, sizeof(char **) * (count + 1));
   result[count] = NULL;

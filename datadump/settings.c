@@ -42,6 +42,27 @@ void settings_mode (void) {
   }
 }
 
+void parse_configuration_line (const char * line) {
+  char ** kvp = split_by(line, ","); // key_value_pairs is too long, so kvp will do
+  if (!kvp) return;
+  unsigned count = string_array_size(kvp), current;
+  unsigned setting_number;
+  char * value;
+  char * result;
+  for (current = 0; current < count; current ++) {
+    value = strchr(kvp[current], '=');
+    if (!value) error_exit(1, "no value given in configuration string: %s", kvp[current]);
+    *(value ++) = 0;
+    for (setting_number = 0; setting_entries[setting_number].name; setting_number ++)
+      if (!strcmp(setting_entries[setting_number].name, kvp[current])) break;
+    if (!setting_entries[setting_number].name) error_exit(1, "unknown setting: %s", kvp[current]);
+    result = setting_entries[setting_number].handler(value);
+    if (!result) error_exit(1, "invalid value for %s: %s", kvp[current], value);
+    free(result);
+  }
+  destroy_string_array(kvp);
+}
+
 void settings_help (void) {
   unsigned setting_number;
   for (setting_number = 0; setting_entries[setting_number].name; setting_number ++)

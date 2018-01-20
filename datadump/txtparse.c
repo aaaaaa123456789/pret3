@@ -73,6 +73,7 @@ char * parse_buffer (const unsigned char * buffer, unsigned buffer_length) {
             break;
           case 0:
             concatenate(&result, &length, "{NAME_END}", NULL);
+            break;
           case 9:
             concatenate(&result, &length, "{PAUSE_UNTIL_PRESS}", NULL);
             break;

@@ -14,7 +14,10 @@ unsigned char get_command(const char *, unsigned);
 void print_command_help(unsigned);
 
 // dumpmain.c
-void dump_incbins(FILE *, FILE *);
+void dump_incbins_interactively(FILE *, FILE *);
+void dump_incbins_via_callback(FILE *, int (*) (struct incbin *, void *, void *), void *);
+int dump_data_from_incbin(struct incbin *, void *, void *);
+int dump_data_with_script(struct incbin *, void *, void *);
 
 // elf.c
 struct ELF_symbol ** read_symbols_from_ELF(const char *, unsigned *, const char **);
@@ -32,6 +35,7 @@ char ** read_file_by_lines(FILE *);
 void * read_file_buffer(FILE *, unsigned, unsigned, const char **);
 unsigned long long read_file_value(FILE *, unsigned, unsigned char, const char **);
 char * read_file_string(FILE *, unsigned, const char **);
+void transfer_temporary_to_file(FILE *);
 
 // global.c
 #ifndef ___NO_DEFINE_VARS
@@ -46,6 +50,10 @@ extern struct transform transforms[];
 extern struct ELF_symbol ** global_symbol_table;
 extern unsigned global_symbol_count;
 extern const char * repository_path;
+extern const char * global_script_path;
+extern char ** command_line_filenames;
+extern unsigned command_line_filename_count;
+extern FILE * global_temporary_file;
 #endif
 
 // ib_bin.c
@@ -70,6 +78,7 @@ void write_incbin_for_segment(const char *, unsigned, unsigned, FILE *);
 
 // ib_parse.c
 int parse_incbin(struct incbin *, FILE *, char **);
+void * get_incbin_contents(struct incbin *);
 
 // ib_ptr.c
 int validate_pointers(const unsigned char *, unsigned);
@@ -81,6 +90,16 @@ int handle_incbin_text(struct incbin *, const unsigned char *, FILE *);
 
 // main.c
 int main(int, char **);
+void error_exit(int, const char *, ...);
+void interactive_mode(void);
+void auto_data_dump_mode(int (*) (struct incbin *, void *, void *), void *);
+void auto_script_mode(void);
+
+// optparse.c
+int parse_options(char **, unsigned);
+const char * get_option_argument(char **, unsigned, unsigned *);
+void multiple_execution_mode_error(int);
+int auto_execution_mode(const char *);
 
 // scr_base.c
 char * script_get_expression_value(const char *, struct script_variables *, int *);
@@ -88,6 +107,7 @@ unsigned char get_line_type(const char *);
 
 // scr_core.c
 int run_script(struct incbin *, const void *, FILE *);
+int handle_script_output(char **, char *, struct incbin *, FILE *);
 int run_script_auto(struct incbin *, const void *, const char *, FILE *);
 char ** execute_script(struct incbin *, const void *, char **, char **);
 
@@ -116,6 +136,7 @@ int validate_variable_name(const char *);
 
 // settings.c
 void settings_mode(void);
+void parse_configuration_line(const char *);
 void settings_help(void);
 char * headers_setting_handler(const char *);
 char * indent_setting_handler(const char *);
@@ -128,6 +149,7 @@ int convert_string_to_number(const char *, int);
 void concatenate(char **, unsigned *, ...);
 char * duplicate_string(const char *);
 char ** split_by_spaces(const char *);
+char ** split_by(const char *, const char *);
 unsigned string_array_size(char **);
 void destroy_string_array(char **);
 const char * find_first_non_space(const char *);
@@ -136,6 +158,7 @@ void generate_initial_indented_line(char **, unsigned *);
 // symbols.c
 void load_symbols(void);
 void unload_symbols(void);
+void preload_symbols(const char *);
 struct ELF_symbol * find_symbol_for_address(unsigned);
 struct ELF_symbol * check_exact_symbol_match(unsigned);
 
