@@ -8,11 +8,16 @@ unsigned char get_command (const char * prompt, unsigned mask) {
     line = read_line(stdin);
     if (!*line) {
       free(line);
+      if (last_command_entered < 0) {
+        print_command_help(mask);
+        continue;
+      }
       return last_command_entered;
     }
     if (!(strcmp(line, "?") && strcmp(line, "help"))) {
       print_command_help(mask);
       free(line);
+      last_command_entered = -1;
       continue;
     }
     for (command = 0; commands[command].name; command ++) {
