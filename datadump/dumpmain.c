@@ -1,6 +1,6 @@
 #include "proto.h"
 
-void dump_incbins (FILE * in, FILE * out) {
+void dump_incbins_interactively (FILE * in, FILE * out) {
   char * line;
   struct incbin * incbin;
   int done = 0;

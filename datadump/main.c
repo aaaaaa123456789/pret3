@@ -12,10 +12,10 @@ int main (int argc, char ** argv) {
     case MODE_AUTO_DATA_8:
     case MODE_AUTO_DATA_16:
     case MODE_AUTO_DATA_32:
-      auto_data_dump_mode(mode); // mode constants are chosen to work this way
+      auto_data_dump_mode(&dump_data_from_incbin, mode); // mode constants are chosen to work this way
       return 0;
     case MODE_AUTO_DATA_PTR:
-      auto_data_dump_mode(0);
+      auto_data_dump_mode(&dump_data_from_incbin, 0);
       return 0;
     case MODE_AUTO_SCRIPT:
       // ...
@@ -43,13 +43,13 @@ void interactive_mode (void) {
   if (command_line_filename_count == 2) {
     out = fopen(command_line_filenames[1], "w");
     if (!out) error_exit(2, "could not open file %s for writing", command_line_filenames[1]);
-    dump_incbins(in, out);
+    dump_incbins_interactively(in, out);
     fclose(in);
     fclose(out);
   } else {
     global_temporary_file = tmpfile();
     if (!global_temporary_file) error_exit(2, "could not create temporary file");
-    dump_incbins(in, global_temporary_file);
+    dump_incbins_interactively(in, global_temporary_file);
     fclose(in);
     in = fopen(*command_line_filenames, "w");
     if (!in) {
@@ -61,7 +61,7 @@ void interactive_mode (void) {
   }
 }
 
-void auto_data_dump_mode (unsigned char width) {
+void auto_data_dump_mode (int (* callback) (struct incbin *, void *, int), int argument) {
   // width = 0 means pointers
   unsigned file_number;
   FILE * file;
@@ -74,7 +74,7 @@ void auto_data_dump_mode (unsigned char width) {
     global_temporary_file = tmpfile();
     if (!global_temporary_file) error_exit(2, "could not create temporary file");
     printf("file %s\n", command_line_filenames[file_number]);
-    dump_incbins_via_callback(file, &dump_data_from_incbin, width);
+    dump_incbins_via_callback(file, callback, argument);
     fclose(file);
     file = fopen(command_line_filenames[file_number], "w");
     if (!file) error_exit(2, "could not open file %s for writing", command_line_filenames[file_number]);
