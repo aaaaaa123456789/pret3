@@ -89,6 +89,7 @@ int handle_incbin_text(struct incbin *, const unsigned char *, FILE *);
 
 // main.c
 int main(int, char **);
+void error_exit(int, const char *, ...);
 int interactive_mode(void);
 
 // optparse.c

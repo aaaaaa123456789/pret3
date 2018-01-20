@@ -102,9 +102,8 @@ void transfer_temporary_to_file (FILE * file) {
   if (rv >= 0) file_size = ftell(global_temporary_file);
   if (file_size != -1) rv = fseek(global_temporary_file, 0, 0);
   if ((file_size == -1) || (rv < 0)) {
-    fputs("error: could not seek in temporary file\n", stderr);
     fclose(global_temporary_file); // try to delete it
-    exit(2);
+    error_exit(2, "could not seek in temporary file");
   }
   char * buffer = malloc(65536);
   clearerr(global_temporary_file);
@@ -116,8 +115,7 @@ void transfer_temporary_to_file (FILE * file) {
   }
   if (ferror(global_temporary_file) || ferror(file)) {
     fclose(global_temporary_file);
-    fputs("error: could not write to file\n", stderr);
-    exit(2);
+    error_exit(2, "could not write to file");
   }
   free(buffer);
   fclose(global_temporary_file);

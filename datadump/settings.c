@@ -51,22 +51,13 @@ void parse_configuration_line (const char * line) {
   char * result;
   for (current = 0; current < count; current ++) {
     value = strchr(kvp[current], '=');
-    if (!value) {
-      fprintf(stderr, "error: no value given in configuration string: %s\n", kvp[current]);
-      exit(1);
-    }
+    if (!value) error_exit(1, "no value given in configuration string: %s", kvp[current]);
     *(value ++) = 0;
     for (setting_number = 0; setting_entries[setting_number].name; setting_number ++)
       if (!strcmp(setting_entries[setting_number].name, kvp[current])) break;
-    if (!setting_entries[setting_number].name) {
-      fprintf(stderr, "error: unknown setting: %s\n", kvp[current]);
-      exit(1);
-    }
+    if (!setting_entries[setting_number].name) error_exit(1, "unknown setting: %s", kvp[current]);
     result = setting_entries[setting_number].handler(value);
-    if (!result) {
-      fprintf(stderr, "error: invalid value for %s: %s\n", kvp[current], value);
-      exit(1);
-    }
+    if (!result) error_exit(1, "invalid value for %s: %s", kvp[current], value);
     free(result);
   }
   destroy_string_array(kvp);

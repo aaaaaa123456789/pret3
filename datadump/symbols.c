@@ -33,10 +33,7 @@ void preload_symbols (const char * file) {
   const char * error;
   unsigned count;
   struct ELF_symbol ** symbols = read_symbols_from_ELF(file, &count, &error);
-  if (error) {
-    fprintf(stderr, "error: could not load symbols from %s: %s\n", file, error);
-    exit(1);
-  }
+  if (error) error_exit(1, "could not load symbols from %s: %s", file, error);
   global_symbol_table = symbols;
   global_symbol_count = count;
   printf("sym: %u symbols loaded\n", count);

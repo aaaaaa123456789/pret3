@@ -29,41 +29,37 @@ int main (int argc, char ** argv) {
   }
 }
 
+void error_exit (int status, const char * fmt, ...) {
+  va_list ap;
+  fputs("error: ", stderr);
+  va_start(ap, fmt);
+  vfprintf(stderr, fmt, ap);
+  putc('\n', stderr);
+  va_end(ap);
+  exit(status);
+}
+
 int interactive_mode (void) {
   FILE * in;
   FILE * out;
-  if (command_line_filename_count > 2) {
-    fputs("error: only a single input and output file can be given in interactive mode\n", stderr);
-    return 1;
-  }
+  if (command_line_filename_count > 2) error_exit(1, "only a single input and output file can be given in interactive mode");
   in = fopen(*command_line_filenames, "r");
-  if (!in) {
-    fprintf(stderr, "error: could not open file %s for reading\n", *command_line_filenames);
-    return 2;
-  }
+  if (!in) error_exit(2, "could not open file %s for reading", *command_line_filenames);
   if (command_line_filename_count == 2) {
     out = fopen(command_line_filenames[1], "w");
-    if (!out) {
-      fprintf(stderr, "error: could not open file %s for writing\n", command_line_filenames[1]);
-      return 2;
-    }
+    if (!out) error_exit(2, "could not open file %s for writing", command_line_filenames[1]);
     dump_incbins(in, out);
     fclose(in);
     fclose(out);
   } else {
     global_temporary_file = tmpfile();
-    if (!global_temporary_file) {
-      fclose(in);
-      fputs("error: could not create temporary file\n", stderr);
-      return 2;
-    }
+    if (!global_temporary_file) error_exit(2, "could not create temporary file");
     dump_incbins(in, global_temporary_file);
     fclose(in);
     in = fopen(*command_line_filenames, "w");
     if (!in) {
-      fprintf(stderr, "error: could not open file %s for writing\n", *command_line_filenames);
       fclose(global_temporary_file);
-      return 2;
+      error_exit(2, "could not open file %s for writing", *command_line_filenames);
     }
     transfer_temporary_to_file(in);
   }
