@@ -24,7 +24,7 @@ int parse_options (char ** options, unsigned count) {
       preload_symbols(get_option_argument(options, count, &current));
     } else if (!strcmp(options[current], "-s")) {
       if (mode) multiple_execution_mode_error(mode);
-      global_script_path = options[current];
+      global_script_path = get_option_argument(options, count, &current);
       mode = MODE_AUTO_SCRIPT;
     } else
       error_exit(1, "unknown option: %s", options[current]);
