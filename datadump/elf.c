@@ -57,7 +57,7 @@ void destroy_ELF_symbols (struct ELF_symbol ** symbols, unsigned count) {
 const char * validate_ELF_file (FILE * file) {
   const char * error;
   if (error = validate_file_value(file, 0, 4, 0x464c457f, "invalid ELF header")) return error;
-  if (error = validate_file_value(file, 16, 4, 0x280002, "invalid ELf type")) return error;
+  if (error = validate_file_value(file, 16, 4, 0x280002, "invalid ELF type")) return error;
   if (error = validate_file_value(file, 20, 4, 1, "invalid ELF version")) return error;
   return NULL;
 }
