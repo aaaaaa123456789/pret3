@@ -12,7 +12,7 @@ void output_binary_data (const unsigned char * data, unsigned length, unsigned c
     sprintf(header, ".%hhubyte", width);
   else
     strcpy(header, ".byte");
-  sprintf(fmtstring, "0x%%0%hhux", width << 1);
+  sprintf(fmtstring, "0x%%0%dx", width << 1);
   while (length) {
     generate_initial_indented_line(&output_line, &output_length);
     if (length > 32)
