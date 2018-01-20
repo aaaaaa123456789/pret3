@@ -90,7 +90,8 @@ int handle_incbin_text(struct incbin *, const unsigned char *, FILE *);
 // main.c
 int main(int, char **);
 void error_exit(int, const char *, ...);
-int interactive_mode(void);
+void interactive_mode(void);
+void auto_data_dump_mode(unsigned char);
 
 // optparse.c
 int parse_options(char **, unsigned);

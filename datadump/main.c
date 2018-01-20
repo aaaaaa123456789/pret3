@@ -7,15 +7,16 @@ int main (int argc, char ** argv) {
   if (!command_line_filename_count) error_exit(1, "no input files");
   switch (mode) {
     case MODE_INTERACTIVE:
-      return interactive_mode();
+      interactive_mode();
+      return 0;
     case MODE_AUTO_DATA_8:
-      // ...
     case MODE_AUTO_DATA_16:
-      // ...
     case MODE_AUTO_DATA_32:
-      // ...
+      auto_data_dump_mode(mode); // mode constants are chosen to work this way
+      return 0;
     case MODE_AUTO_DATA_PTR:
-      // ...
+      auto_data_dump_mode(0);
+      return 0;
     case MODE_AUTO_SCRIPT:
       // ...
     default:
@@ -33,7 +34,7 @@ void error_exit (int status, const char * fmt, ...) {
   exit(status);
 }
 
-int interactive_mode (void) {
+void interactive_mode (void) {
   FILE * in;
   FILE * out;
   if (command_line_filename_count > 2) error_exit(1, "only a single input and output file can be given in interactive mode");
@@ -56,6 +57,28 @@ int interactive_mode (void) {
       error_exit(2, "could not open file %s for writing", *command_line_filenames);
     }
     transfer_temporary_to_file(in);
+    fclose(in);
   }
-  return 0;
+}
+
+void auto_data_dump_mode (unsigned char width) {
+  // width = 0 means pointers
+  unsigned file_number;
+  FILE * file;
+  for (file_number = 0; file_number < command_line_filename_count; file_number ++) {
+    file = fopen(command_line_filenames[file_number], "r");
+    if (!file) {
+      printf("err: skipping file %s (could not open)\n", command_line_filenames[file_number]);
+      continue;
+    }
+    global_temporary_file = tmpfile();
+    if (!global_temporary_file) error_exit(2, "could not create temporary file");
+    printf("file %s\n", command_line_filenames[file_number]);
+    dump_incbins_to_data(file, width);
+    fclose(file);
+    file = fopen(command_line_filenames[file_number], "w");
+    if (!file) error_exit(2, "could not open file %s for writing", command_line_filenames[file_number]);
+    transfer_temporary_to_file(file);
+    fclose(file);
+  }
 }
