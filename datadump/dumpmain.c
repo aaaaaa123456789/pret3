@@ -35,30 +35,23 @@ void dump_incbins (FILE * in, FILE * out) {
   free(script_file);
 }
 
-void dump_incbins_to_data (FILE * file, unsigned char bytes_per_value) {
+void dump_incbins_via_callback (FILE * file, int (* callback) (struct incbin *, void *, int), int argument) {
   // always dumps to the global temporary file
-  // bytes_per_value = 0 means dump pointers
   char * line;
   struct incbin * incbin;
   void * data;
+  int rv;
   while (!feof(file)) {
     line = read_line(file);
     if (is_incbin(line)) {
       printf("<<<< %s\n", line);
       incbin = get_incbin_data(line);
       if (incbin) {
-        if (incbin -> length % (bytes_per_value ? bytes_per_value : 4)) goto nodump;
-        if (!(data = get_incbin_contents(incbin))) goto nodump;
-        if (!(bytes_per_value || validate_pointers(data, incbin -> length))) {
-          free(data);
-          goto nodump;
-        }
-        if (global_settings.insert_replacement_comment) write_header_comment(incbin, global_temporary_file);
-        if (bytes_per_value)
-          output_binary_data(data, incbin -> length, bytes_per_value, global_temporary_file);
-        else
-          output_pointers(data, incbin -> length, global_temporary_file);
+        data = get_incbin_contents(incbin);
+        if (!data) goto nodump;
+        rv = callback(incbin, data, argument);
         free(data);
+        if (!rv) goto nodump;
       } else {
         nodump:
         printf(">>>> %s\n", line);
@@ -71,4 +64,16 @@ void dump_incbins_to_data (FILE * file, unsigned char bytes_per_value) {
     }
     free(line);
   }
+}
+
+int dump_data_from_incbin (struct incbin * incbin, void * data, int bytes_per_value) {
+  // bytes_per_value = 0 means dump pointers
+  if (incbin -> length % (bytes_per_value ? bytes_per_value : 4)) return 0;
+  if (!(bytes_per_value || validate_pointers(data, incbin -> length))) return 0;
+  if (global_settings.insert_replacement_comment) write_header_comment(incbin, global_temporary_file);
+  if (bytes_per_value)
+    output_binary_data(data, incbin -> length, bytes_per_value, global_temporary_file);
+  else
+    output_pointers(data, incbin -> length, global_temporary_file);
+  return 1;
 }

@@ -15,7 +15,8 @@ void print_command_help(unsigned);
 
 // dumpmain.c
 void dump_incbins(FILE *, FILE *);
-void dump_incbins_to_data(FILE *, unsigned char);
+void dump_incbins_via_callback(FILE *, int (*) (struct incbin *, void *, int), int);
+int dump_data_from_incbin(struct incbin *, void *, int);
 
 // elf.c
 struct ELF_symbol ** read_symbols_from_ELF(const char *, unsigned *, const char **);

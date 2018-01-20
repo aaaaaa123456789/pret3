@@ -74,7 +74,7 @@ void auto_data_dump_mode (unsigned char width) {
     global_temporary_file = tmpfile();
     if (!global_temporary_file) error_exit(2, "could not create temporary file");
     printf("file %s\n", command_line_filenames[file_number]);
-    dump_incbins_to_data(file, width);
+    dump_incbins_via_callback(file, &dump_data_from_incbin, width);
     fclose(file);
     file = fopen(command_line_filenames[file_number], "w");
     if (!file) error_exit(2, "could not open file %s for writing", command_line_filenames[file_number]);
