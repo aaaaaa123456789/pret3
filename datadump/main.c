@@ -3,14 +3,8 @@
 int main (int argc, char ** argv) {
   exe_name = *argv;
   int mode = parse_options(argv + 1, argc - 1);
-  if (!repository_path) {
-    fputs("error: repository path not given\n", stderr);
-    return 1;
-  }
-  if (!command_line_filename_count) {
-    fputs("error: no input files\n", stderr);
-    return 1;
-  }
+  if (!repository_path) error_exit(1, "repository path not given");
+  if (!command_line_filename_count) error_exit(1, "no input files");
   switch (mode) {
     case MODE_INTERACTIVE:
       return interactive_mode();
