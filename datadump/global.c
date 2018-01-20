@@ -152,7 +152,6 @@ struct transform transforms[] = {
 struct ELF_symbol ** global_symbol_table = NULL;
 unsigned global_symbol_count = 0;
 
-const char * exe_name = NULL;
 const char * repository_path = NULL;
 const char * global_script_path = NULL;
 

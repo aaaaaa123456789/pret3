@@ -49,7 +49,6 @@ extern struct setting_entry setting_entries[];
 extern struct transform transforms[];
 extern struct ELF_symbol ** global_symbol_table;
 extern unsigned global_symbol_count;
-extern const char * exe_name;
 extern const char * repository_path;
 extern const char * global_script_path;
 extern char ** command_line_filenames;

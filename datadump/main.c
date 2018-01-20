@@ -1,7 +1,6 @@
 #include "proto.h"
 
 int main (int argc, char ** argv) {
-  exe_name = *argv;
   int mode = parse_options(argv + 1, argc - 1);
   if (!repository_path) error_exit(1, "repository path not given");
   if (!command_line_filename_count) error_exit(1, "no input files");
