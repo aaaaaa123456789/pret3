@@ -35,7 +35,7 @@ void dump_incbins_interactively (FILE * in, FILE * out) {
   free(script_file);
 }
 
-void dump_incbins_via_callback (FILE * file, int (* callback) (struct incbin *, void *, int), int argument) {
+void dump_incbins_via_callback (FILE * file, int (* callback) (struct incbin *, void *, void *), void * argument) {
   // always dumps to the global temporary file
   char * line;
   struct incbin * incbin;
@@ -66,8 +66,9 @@ void dump_incbins_via_callback (FILE * file, int (* callback) (struct incbin *, 
   }
 }
 
-int dump_data_from_incbin (struct incbin * incbin, void * data, int bytes_per_value) {
+int dump_data_from_incbin (struct incbin * incbin, void * data, void * argument) {
   // bytes_per_value = 0 means dump pointers
+  unsigned bytes_per_value = *((unsigned *) argument);
   if (incbin -> length % (bytes_per_value ? bytes_per_value : 4)) return 0;
   if (!(bytes_per_value || validate_pointers(data, incbin -> length))) return 0;
   if (global_settings.insert_replacement_comment) write_header_comment(incbin, global_temporary_file);
@@ -76,4 +77,11 @@ int dump_data_from_incbin (struct incbin * incbin, void * data, int bytes_per_va
   else
     output_pointers(data, incbin -> length, global_temporary_file);
   return 1;
+}
+
+int dump_data_with_script (struct incbin * incbin, void * data, void * script) {
+  char ** script_lines = script;
+  char * error = NULL;
+  char ** output_lines = execute_script(incbin, data, script_lines, &error);
+  return handle_script_output(output_lines, error, incbin, global_temporary_file);
 }

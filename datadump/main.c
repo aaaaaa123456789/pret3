@@ -12,13 +12,14 @@ int main (int argc, char ** argv) {
     case MODE_AUTO_DATA_8:
     case MODE_AUTO_DATA_16:
     case MODE_AUTO_DATA_32:
-      auto_data_dump_mode(&dump_data_from_incbin, mode); // mode constants are chosen to work this way
+      auto_data_dump_mode(&dump_data_from_incbin, &mode); // mode constants are chosen to work this way
       return 0;
     case MODE_AUTO_DATA_PTR:
-      auto_data_dump_mode(&dump_data_from_incbin, 0);
+      auto_data_dump_mode(&dump_data_from_incbin, (unsigned []) {0});
       return 0;
     case MODE_AUTO_SCRIPT:
-      // ...
+      auto_script_mode();
+      return 0;
     default:
       return 1;
   }
@@ -61,7 +62,7 @@ void interactive_mode (void) {
   }
 }
 
-void auto_data_dump_mode (int (* callback) (struct incbin *, void *, int), int argument) {
+void auto_data_dump_mode (int (* callback) (struct incbin *, void *, void *), void * argument) {
   // width = 0 means pointers
   unsigned file_number;
   FILE * file;
@@ -81,4 +82,13 @@ void auto_data_dump_mode (int (* callback) (struct incbin *, void *, int), int a
     transfer_temporary_to_file(file);
     fclose(file);
   }
+}
+
+void auto_script_mode (void) {
+  FILE * script_file = fopen(global_script_path, "r");
+  if (!script_file) error_exit(2, "could not open script file %s", global_script_path);
+  char ** script_lines = read_file_by_lines(script_file);
+  fclose(script_file);
+  auto_data_dump_mode(&dump_data_with_script, script_lines);
+  destroy_string_array(script_lines);
 }

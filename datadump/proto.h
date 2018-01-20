@@ -15,8 +15,9 @@ void print_command_help(unsigned);
 
 // dumpmain.c
 void dump_incbins_interactively(FILE *, FILE *);
-void dump_incbins_via_callback(FILE *, int (*) (struct incbin *, void *, int), int);
-int dump_data_from_incbin(struct incbin *, void *, int);
+void dump_incbins_via_callback(FILE *, int (*) (struct incbin *, void *, void *), void *);
+int dump_data_from_incbin(struct incbin *, void *, void *);
+int dump_data_with_script(struct incbin *, void *, void *);
 
 // elf.c
 struct ELF_symbol ** read_symbols_from_ELF(const char *, unsigned *, const char **);
@@ -92,7 +93,8 @@ int handle_incbin_text(struct incbin *, const unsigned char *, FILE *);
 int main(int, char **);
 void error_exit(int, const char *, ...);
 void interactive_mode(void);
-void auto_data_dump_mode(int (*) (struct incbin *, void *, int), int);
+void auto_data_dump_mode(int (*) (struct incbin *, void *, void *), void *);
+void auto_script_mode(void);
 
 // optparse.c
 int parse_options(char **, unsigned);
@@ -106,6 +108,7 @@ unsigned char get_line_type(const char *);
 
 // scr_core.c
 int run_script(struct incbin *, const void *, FILE *);
+int handle_script_output(char **, char *, struct incbin *, FILE *);
 int run_script_auto(struct incbin *, const void *, const char *, FILE *);
 char ** execute_script(struct incbin *, const void *, char **, char **);
 
