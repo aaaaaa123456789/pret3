@@ -7,11 +7,8 @@ struct script_variables * init_script_variables (struct incbin * incbin, const u
   *(vars -> names) = malloc(1);
   **(vars -> names) = 0;
   vars -> values = calloc(1, sizeof(struct script_value));
-  *(vars -> values) = (struct script_value) {
-    .type = 0,
-    .value = (position > incbin -> length) ? 0 : (incbin -> length - position)
-  };
-  if (vars -> values -> value) {
+  if (position < incbin -> length) {
+    vars -> values -> value = incbin -> length - position;
     vars -> values -> data = malloc(vars -> values -> value);
     memcpy(vars -> values -> data, data + position, vars -> values -> value);
   }
