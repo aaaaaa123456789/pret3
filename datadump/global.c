@@ -47,8 +47,11 @@ const char * text_table[] = {
 const unsigned char previewable[] = {0xff, 0xfb, 0xff, 0x7e, 0xff, 0x6f, 0x20,    0,    0,    0,    6, 0x3c,    0, 0x81,    0,    0,
                                         0,    0,    0,    0, 0xfe, 0x7f,    0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f, 0x7f, 0x80};
 
-const char * colors[] = {"TRANSPARENT", "DARK_GREY", "RED", "GREEN", "BLUE", "YELLOW", "CYAN", "MAGENTA",
-                         "LIGHT_GRAY", "BLACK", "BLACK2", "SILVER", "WHITE", "SKY_BLUE", "LIGHT_BLUE", "WHITE2"};
+/*const char * colors[] = {"TRANSPARENT", "DARK_GREY", "RED", "GREEN", "BLUE", "YELLOW", "CYAN", "MAGENTA",
+                         "LIGHT_GRAY", "BLACK", "BLACK2", "SILVER", "WHITE", "SKY_BLUE", "LIGHT_BLUE", "WHITE2"};*/
+const char * colors[] = {"TRANSPARENT", "WHITE", "DARK_GREY", "LIGHT_GREY", "RED", "LIGHT_RED", "GREEN", 
+                         "LIGHT_GREEN", "BLUE", "LIGHT_BLUE", "DYNAMIC_COLOR1", "DYNAMIC_COLOR2", 
+                         "DYNAMIC_COLOR3", "DYNAMIC_COLOR4", "DYNAMIC_COLOR5", "DYNAMIC_COLOR6"};
 
 const char * buffers[] = {NULL, "PLAYER", "STR_VAR_1", "STR_VAR_2", "STR_VAR_3", NULL, "RIVAL", "VERSION",
                           "EVIL_TEAM", "GOOD_TEAM", "EVIL_LEADER", "GOOD_LEADER", "EVIL_LEGENDARY", "GOOD_LEGENDARY", NULL, NULL};
