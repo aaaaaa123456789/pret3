@@ -6,7 +6,11 @@ unsigned char get_command (const char * prompt, unsigned mask) {
   while (1) {
     printf("%s", prompt);
     line = read_line(stdin);
-    if (!(*line && strcmp(line, "?") && strcmp(line, "help"))) {
+    if (!*line) {
+      free(line);
+      return last_command_entered;
+    }
+    if (!(strcmp(line, "?") && strcmp(line, "help"))) {
       print_command_help(mask);
       free(line);
       continue;
@@ -15,6 +19,7 @@ unsigned char get_command (const char * prompt, unsigned mask) {
       if (!(mask & (1 << command))) continue;
       if (!strcmp(line, commands[command].name) || (commands[command].alias && !strcmp(line, commands[command].alias))) {
         free(line);
+        last_command_entered = command;
         return command;
       }
     }

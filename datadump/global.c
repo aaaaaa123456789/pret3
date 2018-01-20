@@ -159,3 +159,5 @@ char ** command_line_filenames = NULL; // do not free individual entries!
 unsigned command_line_filename_count = 0;
 
 FILE * global_temporary_file = NULL;
+
+int last_command_entered = -1;

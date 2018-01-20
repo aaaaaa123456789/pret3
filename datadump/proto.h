@@ -54,6 +54,7 @@ extern const char * global_script_path;
 extern char ** command_line_filenames;
 extern unsigned command_line_filename_count;
 extern FILE * global_temporary_file;
+extern int last_command_entered;
 #endif
 
 // ib_bin.c
