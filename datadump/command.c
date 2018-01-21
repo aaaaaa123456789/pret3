@@ -8,7 +8,7 @@ unsigned char get_command (const char * prompt, unsigned mask) {
     line = read_line(stdin);
     if (!*line) {
       free(line);
-      if (last_command_entered < 0) {
+      if ((last_command_entered < 0) || !(mask & (1 << last_command_entered))) {
         print_command_help(mask);
         continue;
       }
