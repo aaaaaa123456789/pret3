@@ -36,26 +36,29 @@ void output_pointers (const unsigned char * data, unsigned length, FILE * out) {
 void output_pointer (unsigned pointer, FILE * out) {
   char * output_line;
   unsigned output_length;
-  char value[11];
   generate_initial_indented_line(&output_line, &output_length);
-  concatenate(&output_line, &output_length, ".4byte ", NULL);
-  if (!pointer) {
-    printf(">>>> %s0\n", output_line);
-    fprintf(out, "%s0\n", output_line);
-    free(output_line);
-    return;
-  }
+  char * pointer_text = generate_pointer_text(pointer);
+  concatenate(&output_line, &output_length, ".4byte ", pointer_text, NULL);
+  free(pointer_text);
+  printf(">>>> %s\n", output_line);
+  fprintf(out, "%s\n", output_line);
+  free(output_line);
+}
+
+char * generate_pointer_text (unsigned pointer) {
+  if (!pointer) return duplicate_string("0");
+  char * result = NULL;
+  unsigned result_length = 0;
+  char value[11];
   struct ELF_symbol * symbol = NULL;
   if (global_symbol_table) symbol = find_symbol_for_address(pointer);
   if (symbol) {
     pointer -= symbol -> value;
-    concatenate(&output_line, &output_length, symbol -> name, pointer ? " + " : "", NULL);
+    concatenate(&result, &result_length, symbol -> name, pointer ? " + " : "", NULL);
   }
   if (pointer) {
     sprintf(value, "0x%x", pointer);
-    concatenate(&output_line, &output_length, value, NULL);
+    concatenate(&result, &result_length, value, NULL);
   }
-  printf(">>>> %s\n", output_line);
-  fprintf(out, "%s\n", output_line);
-  free(output_line);
+  return result;
 }

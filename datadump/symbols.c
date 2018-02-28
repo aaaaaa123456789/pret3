@@ -29,7 +29,7 @@ void unload_symbols (void) {
 }
 
 void preload_symbols (const char * file) {
-  // similar in spirit to load_symbols(), but we just fail on exit
+  // similar in spirit to load_symbols(), but we just exit on failure
   const char * error;
   unsigned count;
   struct ELF_symbol ** symbols = read_symbols_from_ELF(file, &count, &error);

@@ -85,6 +85,7 @@ void * get_incbin_contents(struct incbin *);
 int validate_pointers(const unsigned char *, unsigned);
 void output_pointers(const unsigned char *, unsigned, FILE *);
 void output_pointer(unsigned, FILE *);
+char * generate_pointer_text(unsigned);
 
 // ib_text.c
 int handle_incbin_text(struct incbin *, const unsigned char *, FILE *);

@@ -8,6 +8,7 @@ char * generate_script_output_line (const char * line, struct script_variables *
   unsigned char print_style;
   unsigned var_name_length;
   char * text;
+  const char * conversion;
   struct script_value * value;
   while (*line) {
     next_var = strchr(line, '$');
@@ -23,10 +24,9 @@ char * generate_script_output_line (const char * line, struct script_variables *
       line = next_var;
     }
     line ++;
-    if ((*line == '+') || (*line == '-'))
-      print_style = *(line ++) == '-';
-    else
-      print_style = 2;
+    text = "+-*";
+    conversion = strchr(text, *line);
+    print_style = conversion ? conversion - text : 3;
     var_name_length = strspn(line, VALID_NAME_CHARS);
     text = malloc(var_name_length + 1);
     memcpy(text, line, var_name_length);
@@ -60,7 +60,7 @@ char * print_script_variable_contents (struct script_value value, unsigned char 
       switch (style) {
         case 0: sprintf(result, "%hhu", (unsigned char) value.value); break;
         case 1: sprintf(result, "%hhd", (signed char) value.value); break;
-        case 2: sprintf(result, "0x%02hhx", (unsigned char) value.value);
+        case 2: case 3: sprintf(result, "0x%02hhx", (unsigned char) value.value);
       }
       return result;
     case 2:
@@ -68,16 +68,18 @@ char * print_script_variable_contents (struct script_value value, unsigned char 
       switch (style) {
         case 0: sprintf(result, "%hu", (unsigned short) value.value); break;
         case 1: sprintf(result, "%hd", (short) value.value); break;
-        case 2: sprintf(result, "0x%04hx", (unsigned short) value.value);
+        case 2: case 3: sprintf(result, "0x%04hx", (unsigned short) value.value);
       }
       return result;
     case 3:
-      result = malloc(12);
       switch (style) {
-        case 0: sprintf(result, "%u", (unsigned) value.value); break;
-        case 1: sprintf(result, "%d", value.value); break;
-        case 2: sprintf(result, "0x%08x", (unsigned) value.value);
+        case 0: sprintf(buf, "%u", (unsigned) value.value); break;
+        case 1: sprintf(buf, "%d", value.value); break;
+        case 2: return generate_pointer_text(value.value);
+        case 3: sprintf(buf, "0x%08x", (unsigned) value.value);
       }
+      result = malloc(12);
+      memcpy(result, buf, 12);
       return result;
     case 4:
       result = parse_buffer(value.data, value.value);
@@ -92,7 +94,7 @@ char * print_script_variable_contents (struct script_value value, unsigned char 
         switch (style) {
           case 0: sprintf(buf, "%hhu", data8[pos]); break;
           case 1: sprintf(buf, "%hhd", (signed char) data8[pos]); break;
-          case 2: sprintf(buf, "0x%02hhx", data8[pos]);
+          case 2: case 3: sprintf(buf, "0x%02hhx", data8[pos]);
         }
         concatenate(&result, &length, pos ? ", " : "", buf, NULL);
       }
@@ -107,7 +109,7 @@ char * print_script_variable_contents (struct script_value value, unsigned char 
         switch (style) {
           case 0: sprintf(buf, "%hu", (unsigned short) data16[pos]); break;
           case 1: sprintf(buf, "%hd", data16[pos]); break;
-          case 2: sprintf(buf, "0x%04hx", data16[pos]);
+          case 2: case 3: sprintf(buf, "0x%04hx", data16[pos]);
         }
         concatenate(&result, &length, pos ? ", " : "", buf, NULL);
       }
@@ -122,9 +124,15 @@ char * print_script_variable_contents (struct script_value value, unsigned char 
         switch (style) {
           case 0: sprintf(buf, "%u", (unsigned) data32[pos]); break;
           case 1: sprintf(buf, "%d", data32[pos]); break;
-          case 2: sprintf(buf, "0x%08x", data32[pos]);
+          case 2: {
+            *buf = 0;
+            char * pointer_value = generate_pointer_text(data32[pos]);
+            concatenate(&result, &length, pos ? ", " : "", pointer_value, NULL);
+            free(pointer_value);
+          } break;
+          case 3: sprintf(buf, "0x%08x", data32[pos]);
         }
-        concatenate(&result, &length, pos ? ", " : "", buf, NULL);
+        if (*buf) concatenate(&result, &length, pos ? ", " : "", buf, NULL);
       }
       return result;
     }
