@@ -27,6 +27,7 @@ char * generate_script_output_line (const char * line, struct script_variables *
     text = "+-*";
     conversion = strchr(text, *line);
     print_style = conversion ? conversion - text : 3;
+    if (conversion) line ++;
     var_name_length = strspn(line, VALID_NAME_CHARS);
     text = malloc(var_name_length + 1);
     memcpy(text, line, var_name_length);
