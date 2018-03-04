@@ -55,6 +55,7 @@ char * print_script_variable_contents (struct script_value value, unsigned char 
     case 0:
       result = malloc(1 + (value.value << 1));
       for (pos = 0; pos < value.value; pos ++) sprintf(result + (pos << 1), "%02hhx", pos[(unsigned char *) (value.data)]);
+      result[value.value << 1] = 0;
       return result;
     case 1:
       result = malloc(5);
