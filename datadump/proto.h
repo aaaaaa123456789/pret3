@@ -59,6 +59,7 @@ extern int last_command_entered;
 
 // ib_bin.c
 void output_binary_data(const unsigned char *, unsigned, unsigned char, FILE *);
+unsigned convert_buffer_to_number(const void *, unsigned char);
 
 // ib_cmd.c
 int handle_incbin_data(struct incbin *, const unsigned char *, FILE *, char **);
@@ -144,6 +145,7 @@ char * headers_setting_handler(const char *);
 char * indent_setting_handler(const char *);
 char * code_labels_setting_handler(const char *);
 char * data_labels_setting_handler(const char *);
+char * endianness_setting_handler(const char *);
 
 // string.c
 unsigned get_value_from_string(const char *, unsigned);

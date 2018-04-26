@@ -43,6 +43,7 @@ struct settings {
   unsigned indent_lines: 4; // 0-9: amount of spaces, 15: one tab
   unsigned code_labels: 1;
   unsigned data_labels: 2; // 0: off, 1: exact, 2: offset
+  unsigned endianness: 1; // 0: little, 1: big
 };
 
 struct ELF_section {

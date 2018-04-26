@@ -5,7 +5,8 @@ struct settings global_settings = {
   .insert_replacement_comment = 1,
   .indent_lines = 0,
   .code_labels = 1,
-  .data_labels = 2
+  .data_labels = 2,
+  .endianness = 0
 };
 
 const char * text_table[] = {
@@ -94,6 +95,8 @@ struct setting_entry setting_entries[] = {
   {"datalabels",   &data_labels_setting_handler, "determines whether dataptr will replace data pointers with" HELP_TEXT_NEWLINE
                                                  "labels after symbols have been loaded. Valid values are off," HELP_TEXT_NEWLINE
                                                  "exact (only exact matches) and on (using label + offset)."},
+  {"endianness",   &endianness_setting_handler,  "sets the endianness of the data in the binary files. Valid" HELP_TEXT_NEWLINE
+                                                 "values are little and big."},
   {NULL,           NULL,                         NULL}
 };
 

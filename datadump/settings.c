@@ -135,3 +135,17 @@ char * data_labels_setting_handler (const char * value) {
   global_settings.data_labels = numeric_value;
   return duplicate_string(numeric_value ? ((numeric_value == 1) ? "exact" : "on") : "off");
 }
+
+char * endianness_setting_handler (const char * value) {
+  unsigned numeric_value;
+  if (!value)
+    numeric_value = global_settings.endianness;
+  else if (!strcmp(value, "little"))
+    numeric_value = 0;
+  else if (!strcmp(value, "big"))
+    numeric_value = 1;
+  else
+    return NULL;
+  global_settings.endianness = numeric_value;
+  return duplicate_string(numeric_value ? "big" : "little");
+}

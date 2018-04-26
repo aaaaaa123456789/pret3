@@ -25,12 +25,8 @@ int validate_pointers (const unsigned char * data, unsigned length) {
 }
 
 void output_pointers (const unsigned char * data, unsigned length, FILE * out) {
-  unsigned count, current, pos = 0;
-  while (pos < length) {
-    current = 0;
-    for (count = 0; count < 4; count ++) current |= ((unsigned) data[pos ++]) << (count << 3);
-    output_pointer(current, out);
-  }
+  unsigned pos;
+  for (pos = 0; pos < length; pos += 4) output_pointer(convert_buffer_to_number(data + pos, 4), out);
 }
 
 void output_pointer (unsigned pointer, FILE * out) {

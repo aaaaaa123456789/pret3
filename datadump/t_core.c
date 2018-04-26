@@ -80,12 +80,9 @@ char * script_transform_basic (struct script_value value, int parameter, struct 
 }
 
 short read_16 (const unsigned char * data) {
-  return (((short) (data[1])) << 8) | *data;
+  return convert_buffer_to_number(data, 2);
 }
 
 int read_32 (const unsigned char * data) {
-  unsigned result = 0;
-  unsigned char p;
-  for (p = 0; p < 4; p ++) result |= ((unsigned) (data[p])) << (p << 3);
-  return result;
+  return convert_buffer_to_number(data, 4);
 }
