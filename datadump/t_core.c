@@ -78,11 +78,3 @@ char * script_transform_basic (struct script_value value, int parameter, struct 
       return duplicate_string("type mismatch");
   }
 }
-
-short read_16 (const unsigned char * data) {
-  return convert_buffer_to_number(data, 2);
-}
-
-int read_32 (const unsigned char * data) {
-  return convert_buffer_to_number(data, 4);
-}

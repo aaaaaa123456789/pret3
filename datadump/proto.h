@@ -187,8 +187,6 @@ char * script_transform_bytesuntil(struct script_value, int, struct script_value
 char * execute_transforms(struct script_value, struct script_transforms *, unsigned, struct script_value *);
 int enforce_value_size(int, unsigned char);
 char * script_transform_basic(struct script_value, int, struct script_value *, int (*) (int, int, char **));
-short read_16(const unsigned char *);
-int read_32(const unsigned char *);
 
 // t_data.c
 char * script_transform_skip(struct script_value, int, struct script_value *);

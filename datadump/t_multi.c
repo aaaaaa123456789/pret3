@@ -23,7 +23,7 @@ char * script_transform_multiXX (struct script_value value, int parameter, struc
     case 2: {
       short * data16 = malloc(sizeof(short) * parameter);
       for (n = 0; n < parameter; n ++) {
-        data16[n] = read_16(p);
+        data16[n] = convert_buffer_to_number(p, 2);
         p += 2;
       }
       result -> data = data16;
@@ -32,7 +32,7 @@ char * script_transform_multiXX (struct script_value value, int parameter, struc
     case 4: {
       int * data32 = malloc(sizeof(int) * parameter);
       for (n = 0; n < parameter; n ++) {
-        data32[n] = read_32(p);
+        data32[n] = convert_buffer_to_number(p, 4);
         p += 4;
       }
       result -> data = data32;

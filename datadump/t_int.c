@@ -16,8 +16,8 @@ char * script_transform_int (struct script_value value, int parameter, struct sc
       result -> type = target_type;
       switch (target_type) {
         case 1: result -> value = *((const signed char *) (value.data)); break;
-        case 2: result -> value = read_16(value.data); break;
-        case 3: result -> value = read_32(value.data); break;
+        case 2: result -> value = (short) convert_buffer_to_number(value.data, 2); break;
+        case 3: result -> value = (int) convert_buffer_to_number(value.data, 4); break;
         default: return duplicate_string("internal error");
       }
       return NULL;
