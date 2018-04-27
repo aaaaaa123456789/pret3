@@ -87,6 +87,7 @@ int validate_pointers(const unsigned char *, unsigned);
 void output_pointers(const unsigned char *, unsigned, FILE *);
 void output_pointer(unsigned, FILE *);
 char * generate_pointer_text(unsigned);
+int validate_pointer(unsigned);
 
 // ib_text.c
 int handle_incbin_text(struct incbin *, const unsigned char *, FILE *);
@@ -147,6 +148,7 @@ char * code_labels_setting_handler(const char *);
 char * data_labels_setting_handler(const char *);
 char * endianness_setting_handler(const char *);
 char * elf_endian_setting_handler(const char *);
+char * pointer_model_setting_handler(const char *);
 
 // string.c
 unsigned get_value_from_string(const char *, unsigned);

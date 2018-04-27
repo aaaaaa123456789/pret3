@@ -3,22 +3,11 @@
 int validate_pointers (const unsigned char * data, unsigned length) {
   unsigned count, current, nonzero = 0, pos = 0;
   while (pos < length) {
-    current = 0;
-    for (count = 0; count < 4; count ++) current |= ((unsigned) data[pos ++]) << (count << 3);
-    if (current) nonzero = current;
-    switch (current >> 24) {
-      case 0:
-        if (current) return 0;
-        break;
-      case 2:
-        if (current >= 0x2040000) return 0;
-        break;
-      case 3:
-        if (current >= 0x3080000) return 0;
-      case 8: case 9:
-        break;
-      default:
-        return 0;
+    current = convert_buffer_to_number(data + pos, 4);
+    pos += 4;
+    if (current) {
+      nonzero = current;
+      if (!validate_pointer(current)) return 0;
     }
   }
   return nonzero;
@@ -57,4 +46,17 @@ char * generate_pointer_text (unsigned pointer) {
     concatenate(&result, &result_length, value, NULL);
   }
   return result;
+}
+
+int validate_pointer (unsigned pointer) {
+  switch (global_settings.pointer_model) {
+    case 0:
+      return pointer;
+    case 1:
+      return ((pointer & 0xfe000000) == 0x08000000) || ((pointer & 0xfffc0000) == 0x02000000) || ((pointer & 0xffff8000) == 0x03000000);
+    case 2:
+      return (pointer & 0xcf000000) == 0x80000000;
+    default:
+      return 0;
+  }
 }

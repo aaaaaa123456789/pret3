@@ -163,3 +163,19 @@ char * elf_endian_setting_handler (const char * value) {
   global_settings.elf_endian = numeric_value;
   return duplicate_string(numeric_value ? "on" : "off");
 }
+
+char * pointer_model_setting_handler (const char * value) {
+  unsigned numeric_value;
+  if (!value)
+    numeric_value = global_settings.elf_endian;
+  else if (!strcmp(value, "any"))
+    numeric_value = 0;
+  else if (!strcmp(value, "gba"))
+    numeric_value = 1;
+  else if (!strcmp(value, "n64-flat"))
+    numeric_value = 2;
+  else
+    return NULL;
+  global_settings.elf_endian = numeric_value;
+  return duplicate_string(numeric_value[(const char * []) {"any", "gba", "n64-flat"}]);
+}

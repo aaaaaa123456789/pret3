@@ -7,7 +7,8 @@ struct settings global_settings = {
   .code_labels = 1,
   .data_labels = 2,
   .endianness = 0,
-  .elf_endian = 1
+  .elf_endian = 1,
+  .pointer_model = 1
 };
 
 const char * text_table[] = {
@@ -86,21 +87,23 @@ struct command commands[] = {
 };
 
 struct setting_entry setting_entries[] = {
-  {"headers",      &headers_setting_handler,     "enables or disables the initial @replacing .incbin header." HELP_TEXT_NEWLINE
-                                                 "Valid values are on and off."},
-  {"indent",       &indent_setting_handler,      "changes the indentation with which new content is written to" HELP_TEXT_NEWLINE
-                                                 "the output. Valid values are 0-9, tab and none."},
-  {"codelabels",   &code_labels_setting_handler, "determines whether dataptr will replace code pointers with" HELP_TEXT_NEWLINE
-                                                 "the corresponding function labels after symbols have been" HELP_TEXT_NEWLINE
-                                                 "loaded. Valid values are on and off."},
-  {"datalabels",   &data_labels_setting_handler, "determines whether dataptr will replace data pointers with" HELP_TEXT_NEWLINE
-                                                 "labels after symbols have been loaded. Valid values are off," HELP_TEXT_NEWLINE
-                                                 "exact (only exact matches) and on (using label + offset)."},
-  {"endianness",   &endianness_setting_handler,  "sets the endianness of the data in the binary files. Valid" HELP_TEXT_NEWLINE
-                                                 "values are little and big."},
-  {"elfendian",    &elf_endian_setting_handler,  "determines whether reading an ELF file for symbol also sets" HELP_TEXT_NEWLINE
-                                                 "the current endianness."},
-  {NULL,           NULL,                         NULL}
+  {"headers",      &headers_setting_handler,        "enables or disables the initial @replacing .incbin header." HELP_TEXT_NEWLINE
+                                                    "Valid values are on and off."},
+  {"indent",       &indent_setting_handler,         "changes the indentation with which new content is written to" HELP_TEXT_NEWLINE
+                                                    "the output. Valid values are 0-9, tab and none."},
+  {"codelabels",   &code_labels_setting_handler,    "determines whether dataptr will replace code pointers with" HELP_TEXT_NEWLINE
+                                                    "the corresponding function labels after symbols have been" HELP_TEXT_NEWLINE
+                                                    "loaded. Valid values are on and off."},
+  {"datalabels",   &data_labels_setting_handler,    "determines whether dataptr will replace data pointers with" HELP_TEXT_NEWLINE
+                                                    "labels after symbols have been loaded. Valid values are off," HELP_TEXT_NEWLINE
+                                                    "exact (only exact matches) and on (using label + offset)."},
+  {"endianness",   &endianness_setting_handler,     "sets the endianness of the data in the binary files. Valid" HELP_TEXT_NEWLINE
+                                                    "values are little and big."},
+  {"elfendian",    &elf_endian_setting_handler,     "determines whether reading an ELF file for symbol also sets" HELP_TEXT_NEWLINE
+                                                    "the current endianness. Valid values are off and on."},
+  {"ptrmodel",     &pointer_model_setting_handler,  "selects the address ranges used to validate pointers. Valid" HELP_TEXT_NEWLINE
+                                                    "values are any, gba and n64-flat."},
+  {NULL,           NULL,                            NULL}
 };
 
 #define transform_entry(name) {#name, &script_transform_ ## name}

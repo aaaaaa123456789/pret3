@@ -45,6 +45,7 @@ struct settings {
   unsigned data_labels: 2; // 0: off, 1: exact, 2: offset
   unsigned endianness: 1; // 0: little, 1: big
   unsigned elf_endian: 1; // 0: off, 1: on
+  unsigned pointer_model: 2; // 0: any, 1: GBA, 2: N64 flat
 };
 
 struct ELF_section {
