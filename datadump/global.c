@@ -6,7 +6,8 @@ struct settings global_settings = {
   .indent_lines = 0,
   .code_labels = 1,
   .data_labels = 2,
-  .endianness = 0
+  .endianness = 0,
+  .elf_endian = 1
 };
 
 const char * text_table[] = {
@@ -97,6 +98,8 @@ struct setting_entry setting_entries[] = {
                                                  "exact (only exact matches) and on (using label + offset)."},
   {"endianness",   &endianness_setting_handler,  "sets the endianness of the data in the binary files. Valid" HELP_TEXT_NEWLINE
                                                  "values are little and big."},
+  {"elfendian",    &elf_endian_setting_handler,  "determines whether reading an ELF file for symbol also sets" HELP_TEXT_NEWLINE
+                                                 "the current endianness."},
   {NULL,           NULL,                         NULL}
 };
 

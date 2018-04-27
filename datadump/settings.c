@@ -149,3 +149,17 @@ char * endianness_setting_handler (const char * value) {
   global_settings.endianness = numeric_value;
   return duplicate_string(numeric_value ? "big" : "little");
 }
+
+char * elf_endian_setting_handler (const char * value) {
+  unsigned numeric_value;
+  if (!value)
+    numeric_value = global_settings.elf_endian;
+  else if (!strcmp(value, "off"))
+    numeric_value = 0;
+  else if (!strcmp(value, "on"))
+    numeric_value = 1;
+  else
+    return NULL;
+  global_settings.elf_endian = numeric_value;
+  return duplicate_string(numeric_value ? "on" : "off");
+}

@@ -46,6 +46,10 @@ struct ELF_symbol ** read_symbols_from_ELF (const char * file, unsigned * count,
   qsort(symbols, cumulative_total, sizeof(struct ELF_symbol *), &compare_ELF_symbols);
   *error = NULL;
   *count = cumulative_total;
+  if (global_settings.elf_endian && (endianness != global_settings.endianness)) {
+    printf("sym: set endianness to %s\n", endianness ? "big" : "little");
+    global_settings.endianness = endianness;
+  }
   return symbols;
 }
 

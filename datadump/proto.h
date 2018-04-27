@@ -146,6 +146,7 @@ char * indent_setting_handler(const char *);
 char * code_labels_setting_handler(const char *);
 char * data_labels_setting_handler(const char *);
 char * endianness_setting_handler(const char *);
+char * elf_endian_setting_handler(const char *);
 
 // string.c
 unsigned get_value_from_string(const char *, unsigned);
