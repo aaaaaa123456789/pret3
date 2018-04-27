@@ -56,7 +56,7 @@ void * read_file_buffer (FILE * file, unsigned offset, unsigned length, const ch
   return result;
 }
 
-unsigned long long read_file_value (FILE * file, unsigned offset, unsigned char size, const char ** error) {
+unsigned long long read_file_value (FILE * file, unsigned offset, unsigned char size, const char ** error, int endianness) {
   *error = NULL;
   if (!size) return 0;
   if (size > sizeof(unsigned long long)) {
@@ -67,7 +67,10 @@ unsigned long long read_file_value (FILE * file, unsigned offset, unsigned char 
   if (*error) return 0;
   unsigned result = 0;
   unsigned char pos;
-  for (pos = 0; pos < size; pos ++) result |= ((unsigned) buffer[pos]) << (pos << 3);
+  if (endianness)
+    for (pos = 0; pos < size; pos ++) result |= ((unsigned) buffer[pos]) << ((size - 1 - pos) << 3);
+  else
+    for (pos = 0; pos < size; pos ++) result |= ((unsigned) buffer[pos]) << (pos << 3);
   free(buffer);
   return result;
 }

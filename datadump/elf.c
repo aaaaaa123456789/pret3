@@ -1,19 +1,20 @@
 #include "proto.h"
 
 struct ELF_symbol ** read_symbols_from_ELF (const char * file, unsigned * count, const char ** error) {
+  int endianness;
   *count = 0;
   FILE * fp = fopen(file, "rb");
   if (!fp) {
     *error = "could not open file for reading";
     return NULL;
   }
-  *error = validate_ELF_file(fp);
+  *error = validate_ELF_file(fp, &endianness);
   if (*error) {
     fclose(fp);
     return NULL;
   }
   unsigned section_count;
-  struct ELF_section * sections = read_ELF_section_table(fp, &section_count, error);
+  struct ELF_section * sections = read_ELF_section_table(fp, &section_count, endianness, error);
   if (*error) {
     fclose(fp);
     return NULL;
@@ -23,7 +24,7 @@ struct ELF_symbol ** read_symbols_from_ELF (const char * file, unsigned * count,
   unsigned current, section_total, cumulative_total = 0;
   for (current = 0; current < section_count; current ++) {
     if (sections[current].type != 2) continue;
-    section_symbols = read_ELF_symbols_from_section(fp, sections[current], sections[sections[current].link], &section_total, error);
+    section_symbols = read_ELF_symbols_from_section(fp, sections[current], sections[sections[current].link], &section_total, endianness, error);
     if (*error) {
       fclose(fp);
       free(sections);
@@ -54,29 +55,30 @@ void destroy_ELF_symbols (struct ELF_symbol ** symbols, unsigned count) {
   free(symbols);
 }
 
-const char * validate_ELF_file (FILE * file) {
+const char * validate_ELF_file (FILE * file, int * endianness) {
   const char * error;
-  if (error = validate_file_value(file, 0, 4, 0x464c457f, "invalid ELF header")) return error;
-  if (error = validate_file_value(file, 16, 4, 0x280002, "invalid ELF type")) return error;
-  if (error = validate_file_value(file, 20, 4, 1, "invalid ELF version")) return error;
+  if (endianness) *endianness = 0; // FIXME
+  if (error = validate_file_value(file, 0, 4, 0x464c457f, 0, "invalid ELF header")) return error;
+  if (error = validate_file_value(file, 16, 4, 0x280002, *endianness, "invalid ELF type")) return error;
+  if (error = validate_file_value(file, 20, 4, 1, *endianness, "invalid ELF version")) return error;
   return NULL;
 }
 
-const char * validate_file_value (FILE * file, unsigned offset, unsigned length, unsigned expected, const char * error_message) {
+const char * validate_file_value (FILE * file, unsigned offset, unsigned length, unsigned expected, int endianness, const char * error_message) {
   const char * error;
-  unsigned rv = read_file_value(file, offset, length, &error);
+  unsigned rv = read_file_value(file, offset, length, &error, endianness);
   if (error) return error;
   if (rv != expected) return error_message;
   return NULL;
 }
 
-struct ELF_section * read_ELF_section_table (FILE * file, unsigned * count, const char ** error) {
+struct ELF_section * read_ELF_section_table (FILE * file, unsigned * count, int endianness, const char ** error) {
   unsigned base_offset, entry_size, section_count;
-  base_offset = read_file_value(file, 32, 4, error);
+  base_offset = read_file_value(file, 32, 4, error, endianness);
   if (*error) return NULL;
-  entry_size = read_file_value(file, 46, 2, error);
+  entry_size = read_file_value(file, 46, 2, error, endianness);
   if (*error) return NULL;
-  section_count = read_file_value(file, 48, 2, error);
+  section_count = read_file_value(file, 48, 2, error, endianness);
   if (*error) return NULL;
   if (!(base_offset && entry_size && section_count)) {
     *error = "ELF file does not contain sections";
@@ -89,11 +91,11 @@ struct ELF_section * read_ELF_section_table (FILE * file, unsigned * count, cons
   struct ELF_section * result = malloc(section_count * sizeof(struct ELF_section));
   unsigned current, offset;
   for (current = 0, offset = base_offset; current < section_count; current ++, offset += entry_size) {
-    result[current].type = read_file_value(file, offset + 4, 4, error);
-    if (!*error) result[current].offset = read_file_value(file, offset + 16, 4, error);
-    if (!*error) result[current].size = read_file_value(file, offset + 20, 4, error);
-    if (!*error) result[current].link = read_file_value(file, offset + 24, 4, error);
-    if (!*error) result[current].entry_size = read_file_value(file, offset + 36, 4, error);
+    result[current].type = read_file_value(file, offset + 4, 4, error, endianness);
+    if (!*error) result[current].offset = read_file_value(file, offset + 16, 4, error, endianness);
+    if (!*error) result[current].size = read_file_value(file, offset + 20, 4, error, endianness);
+    if (!*error) result[current].link = read_file_value(file, offset + 24, 4, error, endianness);
+    if (!*error) result[current].entry_size = read_file_value(file, offset + 36, 4, error, endianness);
     if (*error) {
       free(result);
       return NULL;
@@ -104,7 +106,8 @@ struct ELF_section * read_ELF_section_table (FILE * file, unsigned * count, cons
   return result;
 }
 
-struct ELF_symbol ** read_ELF_symbols_from_section (FILE * file, struct ELF_section section, struct ELF_section strings, unsigned * count, const char ** error) {
+struct ELF_symbol ** read_ELF_symbols_from_section (FILE * file, struct ELF_section section, struct ELF_section strings, unsigned * count, int endianness,
+                                                    const char ** error) {
   struct ELF_symbol ** symbols = NULL;
   struct ELF_symbol * symbol;
   unsigned pos, offset, name_offset, symbol_count = 0;
@@ -113,13 +116,13 @@ struct ELF_symbol ** read_ELF_symbols_from_section (FILE * file, struct ELF_sect
   *count = 0;
   for (pos = 0; pos < section.size; pos += section.entry_size) {
     offset = pos + section.offset;
-    type = read_file_value(file, offset + 12, 1, error) & 15;
+    type = read_file_value(file, offset + 12, 1, error, endianness) & 15;
     if (*error) {
       destroy_ELF_symbols(symbols, symbol_count);
       return NULL;
     }
     if ((type != 1) && (type != 2)) continue;
-    name_offset = read_file_value(file, offset, 4, error);
+    name_offset = read_file_value(file, offset, 4, error, endianness);
     if (!*error) name = read_file_string(file, strings.offset + name_offset, error);
     if (*error) {
       destroy_ELF_symbols(symbols, symbol_count);
@@ -129,8 +132,8 @@ struct ELF_symbol ** read_ELF_symbols_from_section (FILE * file, struct ELF_sect
     strcpy(symbol -> name, name);
     free(name);
     symbol -> type = type;
-    symbol -> value = read_file_value(file, offset + 4, 4, error);
-    if (!*error) symbol -> size = read_file_value(file, offset + 8, 4, error);
+    symbol -> value = read_file_value(file, offset + 4, 4, error, endianness);
+    if (!*error) symbol -> size = read_file_value(file, offset + 8, 4, error, endianness);
     if (*error) {
       free(symbol);
       destroy_ELF_symbols(symbols, symbol_count);

@@ -22,10 +22,10 @@ int dump_data_with_script(struct incbin *, void *, void *);
 // elf.c
 struct ELF_symbol ** read_symbols_from_ELF(const char *, unsigned *, const char **);
 void destroy_ELF_symbols(struct ELF_symbol **, unsigned);
-const char * validate_ELF_file(FILE *);
-const char * validate_file_value(FILE *, unsigned, unsigned, unsigned, const char *);
-struct ELF_section * read_ELF_section_table(FILE *, unsigned *, const char **);
-struct ELF_symbol ** read_ELF_symbols_from_section(FILE *, struct ELF_section, struct ELF_section, unsigned *, const char **);
+const char * validate_ELF_file(FILE *, int *);
+const char * validate_file_value(FILE *, unsigned, unsigned, unsigned, int, const char *);
+struct ELF_section * read_ELF_section_table(FILE *, unsigned *, int, const char **);
+struct ELF_symbol ** read_ELF_symbols_from_section(FILE *, struct ELF_section, struct ELF_section, unsigned *, int, const char **);
 int compare_ELF_symbols(const void *, const void *);
 
 // file.c
@@ -33,7 +33,7 @@ char * read_line(FILE *);
 unsigned get_file_length(FILE *);
 char ** read_file_by_lines(FILE *);
 void * read_file_buffer(FILE *, unsigned, unsigned, const char **);
-unsigned long long read_file_value(FILE *, unsigned, unsigned char, const char **);
+unsigned long long read_file_value(FILE *, unsigned, unsigned char, const char **, int);
 char * read_file_string(FILE *, unsigned, const char **);
 void transfer_temporary_to_file(FILE *);
 
