@@ -57,9 +57,11 @@ void destroy_ELF_symbols (struct ELF_symbol ** symbols, unsigned count) {
 
 const char * validate_ELF_file (FILE * file, int * endianness) {
   const char * error;
-  if (endianness) *endianness = 0; // FIXME
   if (error = validate_file_value(file, 0, 4, 0x464c457f, 0, "invalid ELF header")) return error;
-  if (error = validate_file_value(file, 16, 4, 0x280002, *endianness, "invalid ELF type")) return error;
+  *endianness = read_file_value(file, 5, 1, &error, 0) - 1;
+  if (error) return error;
+  if (*endianness && (*endianness != 1)) return "unknown endianness";
+  if (error = validate_file_value(file, 16, 2, 2, *endianness, "invalid ELF type")) return error;
   if (error = validate_file_value(file, 20, 4, 1, *endianness, "invalid ELF version")) return error;
   return NULL;
 }
