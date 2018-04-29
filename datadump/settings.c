@@ -176,6 +176,6 @@ char * pointer_model_setting_handler (const char * value) {
     numeric_value = 2;
   else
     return NULL;
-  global_settings.elf_endian = numeric_value;
+  global_settings.pointer_model = numeric_value;
   return duplicate_string(numeric_value[(const char * []) {"any", "gba", "n64-flat"}]);
 }
