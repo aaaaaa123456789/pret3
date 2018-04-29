@@ -40,6 +40,10 @@ int handle_incbin_data (struct incbin * incbin, const unsigned char * data, FILE
         return run_script_auto(incbin, data, *script_file, out);
       case 17:
         settings_mode();
+        if (validate_pointers(data, incbin -> length))
+          p |= 0x40;
+        else
+          p &= ~0x40;
         break;
       case 18:
         load_symbols();
