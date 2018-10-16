@@ -5,6 +5,8 @@
 
 #include "struct.h"
 
+#define VERSION "0.2.1"
+
 #define COMMAND_LENGTH "10"
 #define HELP_TEXT_NEWLINE "\n             "
 #define VALID_NAME_CHARS "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_"
@@ -94,6 +96,7 @@ int handle_incbin_text(struct incbin *, const unsigned char *, FILE *);
 
 // main.c
 int main(int, char **);
+void print_version(void);
 void error_exit(int, const char *, ...);
 void interactive_mode(void);
 void auto_data_dump_mode(int (*) (struct incbin *, void *, void *), void *);
@@ -104,6 +107,7 @@ int parse_options(char **, unsigned);
 const char * get_option_argument(char **, unsigned, unsigned *);
 void multiple_execution_mode_error(int);
 int auto_execution_mode(const char *);
+void print_help(void);
 
 // scr_base.c
 char * script_get_expression_value(const char *, struct script_variables *, int *);

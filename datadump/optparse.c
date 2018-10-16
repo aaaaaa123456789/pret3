@@ -26,6 +26,12 @@ int parse_options (char ** options, unsigned count) {
       if (mode) multiple_execution_mode_error(mode);
       global_script_path = get_option_argument(options, count, &current);
       mode = MODE_AUTO_SCRIPT;
+    } else if (!(strcmp(options[current], "-h") && strcmp(options[current], "-?"))) {
+      print_help();
+      exit(1);
+    } else if (!strcmp(options[current], "-v")) {
+      print_version();
+      exit(1);
     } else
       error_exit(1, "unknown option: %s", options[current]);
   }
@@ -53,4 +59,29 @@ int auto_execution_mode (const char * mode_string) {
   else if (!strcmp(mode_string, "ptr"))
     return MODE_AUTO_DATA_PTR;
   error_exit(1, "unknown execution mode: -a %s", mode_string);
+}
+
+void print_help (void) {
+  print_version();
+  fputs("ddump is released to the public domain. No copyright is claimed, and no\n"
+        "warranty, implied or otherwise, is given with the program.\n"
+        "\n"
+        "Usage: ddump [-a <mode> | -s <script>] [-c <config>] [-l <symfile>]\n"
+        "             [--] <repository path> <file> [<file> [<file> ...]]\n"
+        " -a <mode>:    runs the program in automatic dumping mode, as if an equivalent\n"
+        "               'data' command had been used in interactive mode. Valid values\n"
+        "               for <mode> are 8, 16, 32, and ptr.\n"
+        " -c <config>:  sets a setting prior to running the program. <config> must be a\n"
+        "               comma-separated list of name=value pairs; valid settings and\n"
+        "               values are the same as in interactive mode.\n"
+        " -l <symfile>: loads a symfile prior to dumping, as if the 'loadsym' command had\n"
+        "               been used in interactive mode.\n"
+        " -s <script>:  runs the program in automatic scripting mode, applying the given\n"
+        "               script to every block referenced by an .incbin directive.\n"
+        "Note that -- may be used to terminate the option list and parse all remaining\n"
+        "command-line arguments as filenames. Also, -h or -? print this help, and -v\n"
+        "will print version information.\n"
+        "In interactive mode, only one file may be given. If two filenames are given, the\n"
+        "second will be taken as the output file (instead of working in place); passing\n"
+        "three or more in interactive mode (i.e., not -a or -s) is an error.\n", stderr);
 }

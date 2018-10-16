@@ -1,6 +1,11 @@
 #include "proto.h"
 
 int main (int argc, char ** argv) {
+  if (argc < 2) {
+    print_version();
+    fprintf(stderr, "\nNo arguments given. Type %s -? for help.\n", *argv);
+    exit(1);
+  }
   int mode = parse_options(argv + 1, argc - 1);
   if (!repository_path) error_exit(1, "repository path not given");
   if (!command_line_filename_count) error_exit(1, "no input files");
@@ -22,6 +27,10 @@ int main (int argc, char ** argv) {
     default:
       return 1;
   }
+}
+
+void print_version (void) {
+  fputs("ddump - version " VERSION "\n", stderr);
 }
 
 void error_exit (int status, const char * fmt, ...) {
