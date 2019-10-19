@@ -129,8 +129,8 @@ char * generate_script_output_line(const char *, struct script_variables *, char
 char * print_script_variable_contents(struct script_value, unsigned char);
 
 // scr_tf.c
-char * script_parse_assignment_line(const char *, struct script_variables *);
-char * script_get_initializer_value(const char *, struct script_value *, struct script_variables *);
+char * script_parse_assignment_line(const char *, struct script_variables *, unsigned *);
+char * script_get_initializer_value(const char *, struct script_value *, struct script_variables *, unsigned *);
 char * script_get_transforms_for_line(char **, struct script_variables *, struct script_transforms *);
 
 // scr_vars.c

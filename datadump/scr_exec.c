@@ -2,7 +2,7 @@
 
 char ** execute_script_once (struct incbin * incbin, const void * data, char ** script_lines, char ** error, unsigned * data_position) {
   unsigned line_count = string_array_size(script_lines);
-  unsigned count, next_line, current_line = 0;
+  unsigned count, new_incbin_size, next_line, current_line = 0;
   struct script_variables * vars = init_script_variables(incbin, data, *data_position);
   char * line_error;
   int rv;
@@ -17,9 +17,15 @@ char ** execute_script_once (struct incbin * incbin, const void * data, char ** 
         break;
       case 1:
         count = vars -> values -> value;
-        line_error = script_parse_assignment_line(script_lines[current_line], vars);
+        line_error = script_parse_assignment_line(script_lines[current_line], vars, &new_incbin_size);
+        if (line_error)
+          *error = generate_script_error(line_error, current_line + 1);
+        else if (new_incbin_size) {
+          output_line = generate_incbin(incbin -> file, incbin -> offset + *data_position, new_incbin_size);
+          output = realloc(output, sizeof(char *) * (output_count + 1));
+          output[output_count ++] = output_line;
+        }
         *data_position += count - vars -> values -> value;
-        if (line_error) *error = generate_script_error(line_error, current_line + 1);
         current_line ++;
         break;
       case 2:

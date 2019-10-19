@@ -1,6 +1,7 @@
 #include "proto.h"
 
-char * script_parse_assignment_line (const char * line, struct script_variables * vars) {
+char * script_parse_assignment_line (const char * line, struct script_variables * vars, unsigned * new_incbin_size) {
+  *new_incbin_size = 0;
   char ** parts = split_by_spaces(line);
   if (!parts || (string_array_size(parts) < 2)) {
     if (parts) destroy_string_array(parts);
@@ -20,7 +21,7 @@ char * script_parse_assignment_line (const char * line, struct script_variables 
     return error;
   }
   struct script_value initial_value;
-  error = script_get_initializer_value(parts[1], &initial_value, vars);
+  error = script_get_initializer_value(parts[1], &initial_value, vars, new_incbin_size);
   if (error) {
     destroy_string_array(parts);
     free(line_transforms);
@@ -38,14 +39,11 @@ char * script_parse_assignment_line (const char * line, struct script_variables 
   return error;
 }
 
-char * script_get_initializer_value (const char * initializer, struct script_value * value, struct script_variables * vars) {
-  int init_read;
+char * script_get_initializer_value (const char * initializer, struct script_value * value, struct script_variables * vars, unsigned * new_incbin_size) {
+  int init_read = strspn(initializer, ":");
+  initializer += init_read;
   struct script_value initial_value;
-  if (*initializer == ':') {
-    init_read = 1;
-    initializer ++;
-  } else
-    init_read = 0;
+  if (init_read > 2) return duplicate_string("initializer value can have at most two leading colons");
   if (*initializer == '$') {
     struct script_value * pinit = find_script_variable(vars, initializer + 1);
     if (!pinit) return duplicate_string("variable does not exist");
@@ -73,15 +71,17 @@ char * script_get_initializer_value (const char * initializer, struct script_val
     return duplicate_string("internal state error: $ not found");
   else if (vars -> values -> value < initial_value.value)
     return duplicate_string("not enough data to read");
-  char * error = script_transform_copy(*(vars -> values), initial_value.value, value);
+  unsigned read_length = initial_value.value;
+  char * error = script_transform_copy(*(vars -> values), read_length, value);
   if (error) return error;
-  error = script_transform_skip(*(vars -> values), initial_value.value, &initial_value);
+  error = script_transform_skip(*(vars -> values), read_length, &initial_value);
   if (error) {
     destroy_script_value(*value);
     value -> data = NULL;
     return error;
   }
   assign_script_value(vars, "", initial_value);
+  if (init_read > 1) *new_incbin_size = read_length;
   return NULL;
 }
 
