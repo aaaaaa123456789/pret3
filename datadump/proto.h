@@ -5,7 +5,7 @@
 
 #include "struct.h"
 
-#define VERSION "0.2.1"
+#define VERSION "0.3.0"
 
 #define COMMAND_LENGTH "10"
 #define HELP_TEXT_NEWLINE "\n             "
