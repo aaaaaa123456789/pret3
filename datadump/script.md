@@ -1,5 +1,25 @@
 # datadump scripting language
 
+* [Introduction](#introduction)
+* [Scripting basics](#scripting-basics)
+    * [Variables](#variables)
+    * [Assignment lines](#assignment-lines)
+    * [Loops](#loops)
+    * [Printing lines](#printing-lines)
+* [Transforms](#transforms)
+    * [Arithmetic/logic transforms](#arithmeticlogic-transforms)
+    * [Checking transforms](#checking-transforms)
+    * [Data transforms](#data-transforms)
+    * [Type conversion transforms](#type-conversion-transforms)
+* [Sample scripts](#sample-scripts)
+    * [Example 1: pointer parsing script](#example-1-pointer-parsing-script)
+    * [Example 2: text dumper](#example-2-text-dumper)
+
+***
+
+
+## Introduction
+
 The purpose of the scripting language is to process a single binary inclusion (incbin) in a programmable way, thus enabling complex forms of processing and dumping its contents.
 
 A script is executed taking the incbin's data as input. The script can consume as much data from it as it needs to. As long as data remains, the script will be continuously re-run on the remaining data (although no state is preserved between successive executions).
