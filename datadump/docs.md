@@ -42,6 +42,4 @@ a single switch (such as `-ac` for `-a -c`) is forbidden.
 
 ### Further reading
 
-Information about the scripting language can be found on [the wiki][datadump-wiki].
-
-[datadump-wiki]: https://github.com/TwitchPlaysPokemon/pret3/wiki/datadump-scripting-language
+Information about the scripting language can be found on [the script.md file](script.md).
