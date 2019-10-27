@@ -159,11 +159,11 @@ char * print_script_variable_contents (struct script_value value, unsigned char 
 
 void process_next_codepoint (char * result, unsigned short * last_surrogate, unsigned codepoint) {
   *result = 0;
-  if ((codepoint & -0x800u) == 0xd800) {
+  if ((codepoint & -0x400u) == 0xd800) {
     *last_surrogate = codepoint;
     return;
   }
-  if (*last_surrogate && ((codepoint & -0x800u) == 0xdc00))
+  if (*last_surrogate && ((codepoint & -0x400u) == 0xdc00))
     codepoint = 0x10000u + ((*last_surrogate & 0x3ffu) << 10) + (codepoint & 0x3ffu);
   *last_surrogate = 0;
   generate_UTF8_character(result, codepoint);
