@@ -33,6 +33,7 @@ char * generate_script_output_line (const char * line, struct script_variables *
     memcpy(text, line, var_name_length);
     text[var_name_length] = 0;
     line += var_name_length;
+    if (*line == '$') line ++;
     value = find_script_variable(vars, text);
     free(text);
     if (!value) {
