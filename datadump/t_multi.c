@@ -91,11 +91,34 @@ char * script_transform_multi32 (struct script_value value, int parameter, struc
 
 char * script_transform_multi (struct script_value value, int parameter, struct script_value * result) {
   result -> data = NULL;
-  if (value.type)
-    return duplicate_string("type mismatch");
-  else if ((parameter != 1) && (parameter != 2) && (parameter != 4))
-    return duplicate_string("parameter must be 1, 2 or 4");
-  else if (value.value & (parameter - 1))
-    return duplicate_string("data length is not aligned");
-  return script_transform_multiXX(value, value.value / parameter, result, parameter);
+  if (parameter) {
+    if (value.type)
+      return duplicate_string("type mismatch");
+    else if ((parameter != 1) && (parameter != 2) && (parameter != 4))
+      return duplicate_string("parameter must be 1, 2 or 4");
+    else if (value.value & (parameter - 1))
+      return duplicate_string("data length is not aligned");
+    return script_transform_multiXX(value, value.value / parameter, result, parameter);
+  } else {
+    if (value.type < 5) return duplicate_string("type mismatch");
+    result -> type = 0;
+    result -> value = value.value << (value.type - 5);
+    result -> data = malloc(result -> value);
+    unsigned p;
+    unsigned char * data = result -> data;
+    switch (value.type) {
+      case 5:
+        memcpy(result -> data, value.data, result -> value);
+        break;
+      case 6: {
+        unsigned short * data16 = value.data;
+        for (p = 0; p < value.value; p ++) convert_number_to_buffer(data + p * 2, 2, data16[p]);
+      } break;
+      case 7: {
+        unsigned * data32 = value.data;
+        for (p = 0; p < value.value; p ++) convert_number_to_buffer(data + p * 4, 4, data32[p]);
+      }
+    }
+    return NULL;
+  }
 }

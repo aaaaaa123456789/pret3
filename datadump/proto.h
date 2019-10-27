@@ -62,6 +62,7 @@ extern int last_command_entered;
 // ib_bin.c
 void output_binary_data(const unsigned char *, unsigned, unsigned char, FILE *);
 unsigned convert_buffer_to_number(const void *, unsigned char);
+void convert_number_to_buffer(void *, unsigned char, unsigned);
 
 // ib_cmd.c
 int handle_incbin_data(struct incbin *, const unsigned char *, FILE *, char **);

@@ -42,3 +42,15 @@ unsigned convert_buffer_to_number (const void * buffer, unsigned char length) {
     for (current = 0; current < length; current ++) result |= ((unsigned) p[current]) << (current << 3);
   return result;
 }
+
+void convert_number_to_buffer (void * buffer, unsigned char length, unsigned number) {
+  unsigned char * p = buffer;
+  while (length) {
+    length --;
+    if (global_settings.endianness)
+      p[length] = number;
+    else
+      *(p ++) = number;
+    number >>= 8;
+  }
+}
