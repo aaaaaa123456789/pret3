@@ -100,3 +100,28 @@ void generate_initial_indented_line (char ** string, unsigned * length) {
   current_length[*string] = 0;
   if (length) *length = current_length;
 }
+
+void generate_UTF8_character (char * string, unsigned codepoint) {
+  *string = 0;
+  if (!codepoint || (codepoint > 0x10ffff) || ((codepoint & -0x800u) == 0xd800)) return;
+  unsigned char remaining;
+  if (codepoint < 0x80)
+    remaining = 0;
+  else if (codepoint < 0x2000) {
+    *string = 0xc0;
+    remaining = 1;
+  } else if (codepoint < 0x10000) {
+    *string = 0xe0;
+    remaining = 2;
+  } else {
+    *string = 0xf0;
+    remaining = 3;
+  }
+  string[remaining + 1] = 0;
+  while (remaining) {
+    string[remaining] = 0x80 + (codepoint & 0x3f);
+    remaining --;
+    codepoint >>= 6;
+  }
+  *string += codepoint;
+}

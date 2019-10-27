@@ -24,9 +24,9 @@ char * generate_script_output_line (const char * line, struct script_variables *
       line = next_var;
     }
     line ++;
-    text = "+-*";
-    conversion = strchr(text, *line);
-    print_style = conversion ? conversion - text : 3;
+    text = "+-*%";
+    conversion = *line ? strchr(text, *line) : NULL;
+    print_style = conversion ? conversion - text : -1u;
     if (conversion) line ++;
     var_name_length = strspn(line, VALID_NAME_CHARS);
     text = malloc(var_name_length + 1);
@@ -52,8 +52,17 @@ char * print_script_variable_contents (struct script_value value, unsigned char 
   char * result;
   unsigned pos, length;
   char buf[12];
+  unsigned short last_surrogate = 0;
   switch (value.type) {
     case 0:
+      if (style == 3) {
+        result = malloc(value.value + 1);
+        unsigned pos;
+        char * current = result;
+        for (pos = 0; pos < value.value; pos ++) if (pos[(char *) value.data]) *(current ++) = pos[(char *) value.data];
+        *current = 0;
+        return result;
+      }
       result = malloc(1 + (value.value << 1));
       for (pos = 0; pos < value.value; pos ++) sprintf(result + (pos << 1), "%02hhx", pos[(unsigned char *) (value.data)]);
       result[value.value << 1] = 0;
@@ -63,7 +72,8 @@ char * print_script_variable_contents (struct script_value value, unsigned char 
       switch (style) {
         case 0: sprintf(result, "%hhu", (unsigned char) value.value); break;
         case 1: sprintf(result, "%hhd", (signed char) value.value); break;
-        case 2: case 3: sprintf(result, "0x%02hhx", (unsigned char) value.value);
+        case 3: generate_UTF8_character(result, (unsigned char) value.value); break;
+        default: sprintf(result, "0x%02hhx", (unsigned char) value.value);
       }
       return result;
     case 2:
@@ -71,7 +81,8 @@ char * print_script_variable_contents (struct script_value value, unsigned char 
       switch (style) {
         case 0: sprintf(result, "%hu", (unsigned short) value.value); break;
         case 1: sprintf(result, "%hd", (short) value.value); break;
-        case 2: case 3: sprintf(result, "0x%04hx", (unsigned short) value.value);
+        case 3: generate_UTF8_character(result, (unsigned short) value.value); break;
+        default: sprintf(result, "0x%04hx", (unsigned short) value.value);
       }
       return result;
     case 3:
@@ -79,7 +90,8 @@ char * print_script_variable_contents (struct script_value value, unsigned char 
         case 0: sprintf(buf, "%u", (unsigned) value.value); break;
         case 1: sprintf(buf, "%d", value.value); break;
         case 2: return generate_pointer_text(value.value);
-        case 3: sprintf(buf, "0x%08x", (unsigned) value.value);
+        case 3: generate_UTF8_character(buf, (unsigned) value.value); break;
+        default: sprintf(buf, "0x%08x", (unsigned) value.value);
       }
       result = malloc(12);
       memcpy(result, buf, 12);
@@ -97,9 +109,10 @@ char * print_script_variable_contents (struct script_value value, unsigned char 
         switch (style) {
           case 0: sprintf(buf, "%hhu", data8[pos]); break;
           case 1: sprintf(buf, "%hhd", (signed char) data8[pos]); break;
-          case 2: case 3: sprintf(buf, "0x%02hhx", data8[pos]);
+          case 3: generate_UTF8_character(buf, data8[pos]); break;
+          default: sprintf(buf, "0x%02hhx", data8[pos]);
         }
-        concatenate(&result, &length, pos ? ", " : "", buf, NULL);
+        concatenate(&result, &length, (pos && (style != 3)) ? ", " : "", buf, NULL);
       }
       return result;
     }
@@ -112,9 +125,10 @@ char * print_script_variable_contents (struct script_value value, unsigned char 
         switch (style) {
           case 0: sprintf(buf, "%hu", (unsigned short) data16[pos]); break;
           case 1: sprintf(buf, "%hd", data16[pos]); break;
-          case 2: case 3: sprintf(buf, "0x%04hx", data16[pos]);
+          case 3: process_next_codepoint(buf, &last_surrogate, (unsigned short) data16[pos]); break;
+          default: sprintf(buf, "0x%04hx", data16[pos]);
         }
-        concatenate(&result, &length, pos ? ", " : "", buf, NULL);
+        if (*buf) concatenate(&result, &length, (pos && (style != 3)) ? ", " : "", buf, NULL);
       }
       return result;
     }
@@ -133,11 +147,24 @@ char * print_script_variable_contents (struct script_value value, unsigned char 
             concatenate(&result, &length, pos ? ", " : "", pointer_value, NULL);
             free(pointer_value);
           } break;
-          case 3: sprintf(buf, "0x%08x", data32[pos]);
+          case 3: process_next_codepoint(buf, &last_surrogate, data32[pos]); break;
+          default: sprintf(buf, "0x%08x", data32[pos]);
         }
-        if (*buf) concatenate(&result, &length, pos ? ", " : "", buf, NULL);
+        if (*buf) concatenate(&result, &length, (pos && (style != 3)) ? ", " : "", buf, NULL);
       }
       return result;
     }
   }
+}
+
+void process_next_codepoint (char * result, unsigned short * last_surrogate, unsigned codepoint) {
+  *result = 0;
+  if ((codepoint & -0x800u) == 0xd800) {
+    *last_surrogate = codepoint;
+    return;
+  }
+  if (*last_surrogate && ((codepoint & -0x800u) == 0xdc00))
+    codepoint = 0x10000u + ((*last_surrogate & 0x3ffu) << 10) + (codepoint & 0x3ffu);
+  *last_surrogate = 0;
+  generate_UTF8_character(result, codepoint);
 }

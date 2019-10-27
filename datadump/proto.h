@@ -127,6 +127,7 @@ int script_loop_test(const char *, struct script_variables *, char **);
 // scr_prnt.c
 char * generate_script_output_line(const char *, struct script_variables *, char **);
 char * print_script_variable_contents(struct script_value, unsigned char);
+void process_next_codepoint(char *, unsigned short *, unsigned);
 
 // scr_tf.c
 char * script_parse_assignment_line(const char *, struct script_variables *, unsigned *);
@@ -165,6 +166,7 @@ unsigned string_array_size(char **);
 void destroy_string_array(char **);
 const char * find_first_non_space(const char *);
 void generate_initial_indented_line(char **, unsigned *);
+void generate_UTF8_character(char *, unsigned);
 
 // symbols.c
 void load_symbols(void);
