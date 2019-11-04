@@ -11,7 +11,7 @@ char * parse_buffer (const unsigned char * buffer, unsigned buffer_length) {
   for (pos = 0; pos < buffer_length; pos ++)
     switch (shift_state) {
       case 0:
-        if ((buffer[pos] & 0xfe) == 0xfc)
+        if (buffer[pos] == 0xF7 || buffer[pos] == 0xF8 || buffer[pos] == 0xF9 || buffer[pos] == 0xFC || buffer[pos] == 0xFD)
           shift_state = buffer[pos];
         else
           concatenate(&result, &length, text_table[buffer[pos]], NULL);
@@ -43,6 +43,15 @@ char * parse_buffer (const unsigned char * buffer, unsigned buffer_length) {
         concatenate(&result, &length, "{PAUSE ", temp, "}", NULL);
         shift_state = 0;
         break;
+      case 11:
+        prev_value = buffer[pos];
+        shift_state = 111;
+        break;
+      case 111:
+        sprintf(temp, "%02hhX%02hhX", buffer[pos], prev_value);
+        concatenate(&result, &length, "{PLAY_BGM 0x", temp, "}", NULL);
+        shift_state = 0;
+        break;
       case 12:
         if (buffer[pos] < 250)
           concatenate(&result, &length, text_table[buffer[pos]], NULL);
@@ -59,11 +68,24 @@ char * parse_buffer (const unsigned char * buffer, unsigned buffer_length) {
         break;
       case 16:
         prev_value = buffer[pos];
-        shift_state = 17;
+        shift_state = 116;
         break;
-      case 17:
+      case 116:
         sprintf(temp, "%02hhX%02hhX", buffer[pos], prev_value);
-        concatenate(&result, &length, "{PLAY_MUSIC 0x", temp, "}", NULL);
+        concatenate(&result, &length, "{PLAY_SE 0x", temp, "}", NULL);
+        shift_state = 0;
+        break;
+      case 0xf7:
+        sprintf(temp, "%hhu", buffer[pos]);
+        concatenate(&result, &length, "{DYNAMIC ", temp, "}", NULL);
+        shift_state = 0;
+        break;
+      case 0xf8:
+        concatenate(&result, &length, "{", keygfx[buffer[pos]], "}", NULL);
+        shift_state = 0;
+        break;
+      case 0xf9:
+        concatenate(&result, &length, "{", buffer[pos] < 0xD0 ? extra[buffer[pos]] : emoji[buffer[pos] - 0xD0], "}", NULL);
         shift_state = 0;
         break;
       case 0xfc:
