@@ -11,10 +11,10 @@ char * parse_buffer (const unsigned char * buffer, unsigned buffer_length) {
   for (pos = 0; pos < buffer_length; pos ++)
     switch (shift_state) {
       case 0:
-        if (text_table[buffer[pos]] == NULL)
-          shift_state = buffer[pos];
-        else
+        if (text_table[buffer[pos]])
           concatenate(&result, &length, text_table[buffer[pos]], NULL);
+        else
+          shift_state = buffer[pos];
         break;
       case 1:
       case 2:
