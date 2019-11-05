@@ -11,7 +11,7 @@ char * parse_buffer (const unsigned char * buffer, unsigned buffer_length) {
   for (pos = 0; pos < buffer_length; pos ++)
     switch (shift_state) {
       case 0:
-        if (buffer[pos] == 0xF7 || buffer[pos] == 0xF8 || buffer[pos] == 0xF9 || buffer[pos] == 0xFC || buffer[pos] == 0xFD)
+        if (text_table[buffer[pos]] == NULL)
           shift_state = buffer[pos];
         else
           concatenate(&result, &length, text_table[buffer[pos]], NULL);
@@ -81,11 +81,11 @@ char * parse_buffer (const unsigned char * buffer, unsigned buffer_length) {
         shift_state = 0;
         break;
       case 0xf8:
-        concatenate(&result, &length, "{", keygfx[buffer[pos]], "}", NULL);
+        concatenate(&result, &length, "{", joypad_buttons[buffer[pos]], "}", NULL);
         shift_state = 0;
         break;
       case 0xf9:
-        concatenate(&result, &length, "{", buffer[pos] < 0xD0 ? extra[buffer[pos]] : emoji[buffer[pos] - 0xD0], "}", NULL);
+        concatenate(&result, &length, "{", buffer[pos] < 0xD0 ? extra_symbols[buffer[pos]] : emoji[buffer[pos] - 0xD0], "}", NULL);
         shift_state = 0;
         break;
       case 0xfc:
