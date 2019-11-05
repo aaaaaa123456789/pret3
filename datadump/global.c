@@ -35,7 +35,7 @@ const char * text_table[] = {
   /* 98 */  "\xe3\x83\x96", "\xe3\x83\x99", "\xe3\x83\x9c", "\xe3\x83\x91", "\xe3\x83\x94", "\xe3\x83\x97", "\xe3\x83\x9a", "\xe3\x83\x9d",
   /* A0 */  "\xe3\x83\x83", "0",            "1",            "2",            "3",            "4",            "5",            "6",
   /* A8 */  "7",            "8",            "9",            "!",            "?",            ".",            "-",            "\xe3\x83\xbb",
-  /* B0 */  "\xe2\x80\xa6", "\xe2\x80\x9c", "\xe2\x80\x9d", "\xe2\x80\x98", "\xe2\x80\x99", "\xe2\x99\x82", "\xe2\x99\x80", "<yen>",
+  /* B0 */  "\xe2\x80\xa6", "\xe2\x80\x9c", "\xe2\x80\x9d", "\xe2\x80\x98", "'",            "\xe2\x99\x82", "\xe2\x99\x80", "\xc2\xa5",
   /* B8 */  ",",            "\xc3\x97",     "/",            "A",            "B",            "C",            "D",            "E",
   /* C0 */  "F",            "G",            "H",            "I",            "J",            "K",            "L",            "M",
   /* C8 */  "N",            "O",            "P",            "Q",            "R",            "S",            "T",            "U",
@@ -43,8 +43,8 @@ const char * text_table[] = {
   /* D8 */  "d",            "e",            "f",            "g",            "h",            "i",            "j",            "k",
   /* E0 */  "l",            "m",            "n",            "o",            "p",            "q",            "r",            "s",
   /* E8 */  "t",            "u",            "v",            "w",            "x",            "y",            "z",            "\xe2\x96\xb6",
-  /* F0 */  ":",            "\xc3\x84",     "\xc3\x96",     "\xc3\x9c",     "\xc3\xa4",     "\xc3\xb6",     "\xc3\xbc",     "\xe2\xac\x86",
-  /* F8 */  "\xe2\xac\x87", "\xe2\xac\x85", "\\l",          "\\p",          "",             "",             "\\n",          "$"
+  /* F0 */  ":",            "\xc3\x84",     "\xc3\x96",     "\xc3\x9c",     "\xc3\xa4",     "\xc3\xb6",     "\xc3\xbc",     NULL,
+  /* F8 */  NULL,           NULL,           "\\l",          "\\p",          NULL,           NULL,           "\\n",          "$"
 };
 
 const unsigned char previewable[] = {0xff, 0xfb, 0xff, 0x7e, 0xff, 0x6f, 0x20,    0,    0,    0,    6, 0x3c,    0, 0x81,    0,    0,
@@ -55,6 +55,23 @@ const char * colors[] = {"TRANSPARENT", "DARK_GREY", "RED", "GREEN", "BLUE", "YE
 
 const char * buffers[] = {NULL, "PLAYER", "STR_VAR_1", "STR_VAR_2", "STR_VAR_3", NULL, "RIVAL", "VERSION",
                           "EVIL_TEAM", "GOOD_TEAM", "EVIL_LEADER", "GOOD_LEADER", "EVIL_LEGENDARY", "GOOD_LEGENDARY", NULL, NULL};
+
+const char * joypad_buttons[] = {"A_BUTTON", "B_BUTTON", "L_BUTTON", "R_BUTTON", "START_BUTTON", "SELECT_BUTTON",
+                                 "DPAD_UP", "DPAD_DOWN", "DPAD_LEFT", "DPAD_RIGHT", "DPAD_UPDOWN", "DPAD_LEFTRIGHT", "DPAD_ANY"};
+
+const char * extra_symbols[] = {"UP_ARROW_2", "DOWN_ARROW_2", "LEFT_ARROW_2", "RIGHT_ARROW_2", "PLUS", "LV_2", "PP",
+                                "ID", "NO", "UNDERSCORE", "CIRCLE_1", "CIRCLE_2", "CIRCLE_3", "CIRCLE_4", "CIRCLE_5",
+                                "CIRCLE_6", "CIRCLE_7", "CIRCLE_8", "CIRCLE_9", "LEFT_PAREN", "RIGHT_PAREN", "CIRCLE_DOT", "TRIANGLE", "BIG_MULT_X"};
+
+const char * emoji[] = {"EMOJI_UNDERSCORE", "EMOJI_PIPE", "EMOJI_HIGHBAR", "EMOJI_TILDE", "EMOJI_LEFT_PAREN",
+                        "EMOJI_RIGHT_PAREN", "EMOJI_UNION", "EMOJI_GREATER_THAN", "EMOJI_LEFT_EYE", "EMOJI_RIGHT_EYE",
+                        "EMOJI_AT", "EMOJI_SEMICOLON", "EMOJI_PLUS", "EMOJI_MINUS", "EMOJI_EQUALS", "EMOJI_SPIRAL",
+                        "EMOJI_TONGUE", "EMOJI_TRIANGLE_OUTLINE", "EMOJI_ACUTE", "EMOJI_GRAVE", "EMOJI_CIRCLE",
+                        "EMOJI_TRIANGLE", "EMOJI_SQUARE", "EMOJI_HEART", "EMOJI_MOON", "EMOJI_NOTE", "EMOJI_BALL",
+                        "EMOJI_BOLT", "EMOJI_LEAF", "EMOJI_FIRE", "EMOJI_WATER", "EMOJI_LEFT_FIST", "EMOJI_RIGHT_FIST",
+                        "EMOJI_BIGWHEEL", "EMOJI_SMALLWHEEL", "EMOJI_SPHERE", "EMOJI_IRRITATED", "EMOJI_MISCHIEVOUS",
+                        "EMOJI_HAPPY", "EMOJI_ANGRY", "EMOJI_SURPRISED", "EMOJI_BIGSMILE", "EMOJI_EVIL", "EMOJI_TIRED",
+                        "EMOJI_NEUTRAL", "EMOJI_SHOCKED", "EMOJI_BIGANGER"};
 
 struct command commands[] = {
   {"abort",        NULL,        "aborts all processing and exits"},
