@@ -16,9 +16,7 @@ char * parse_buffer (const unsigned char * buffer, unsigned buffer_length) {
         else
           shift_state = buffer[pos];
         break;
-      case 1:
-      case 2:
-      case 3:
+      case 1: case 2: case 3:
         shift_state --;
         sprintf(temp, "%hhu", buffer[pos]);
         concatenate(&result, &length, "{", shift_state[(const char * []) {"COLOR", "HIGHLIGHT", "SHADOW"}], " ",
@@ -85,7 +83,7 @@ char * parse_buffer (const unsigned char * buffer, unsigned buffer_length) {
         shift_state = 0;
         break;
       case 0xf9:
-        concatenate(&result, &length, "{", buffer[pos] < 0xD0 ? extra_symbols[buffer[pos]] : emoji[buffer[pos] - 0xD0], "}", NULL);
+        concatenate(&result, &length, "{", (buffer[pos] < 0xd0) ? extra_symbols[buffer[pos]] : emoji[buffer[pos] - 0xd0], "}", NULL);
         shift_state = 0;
         break;
       case 0xfc:
