@@ -2,7 +2,7 @@
 
 char * parse_buffer (const unsigned char * buffer, unsigned buffer_length) {
   unsigned char shift_state = 0;
-  unsigned char prev_value;
+  unsigned char prev_value[2];
   char * result = malloc(1);
   *result = 0;
   unsigned length = 0;
@@ -11,10 +11,17 @@ char * parse_buffer (const unsigned char * buffer, unsigned buffer_length) {
   for (pos = 0; pos < buffer_length; pos ++)
     switch (shift_state) {
       case 0:
-        if ((buffer[pos] & 0xfe) == 0xfc)
-          shift_state = buffer[pos];
-        else
-          concatenate(&result, &length, text_table[buffer[pos]], NULL);
+        switch (buffer[pos])
+        {
+          case 0xF9:
+          case 0xFC:
+          case 0xFD:
+            shift_state = buffer[pos];
+            break;
+          default:
+            concatenate(&result, &length, text_table[buffer[pos]], NULL);
+            break;
+        }
         break;
       case 1:
       case 2:
@@ -26,12 +33,12 @@ char * parse_buffer (const unsigned char * buffer, unsigned buffer_length) {
         shift_state = 0;
         break;
       case 4:
-        prev_value = buffer[pos];
-        shift_state = 5;
+        prev_value[0] = buffer[pos];
+        shift_state = 22;
         break;
       case 5:
-        concatenate(&result, &length, "{COLOR_HIGHLIGHT_SHADOW ", (prev_value > 15) ? temp : colors[prev_value], " ",
-                    (buffer[pos] > 15) ? temp : colors[buffer[pos]], "}", NULL);
+        sprintf(temp, "%hhu", buffer[pos]);
+        concatenate(&result, &length, "{PALETTE ", temp, "}", NULL);
         shift_state = 0;
         break;
       case 6:
@@ -42,6 +49,10 @@ char * parse_buffer (const unsigned char * buffer, unsigned buffer_length) {
         sprintf(temp, "%hhu", buffer[pos]);
         concatenate(&result, &length, "{PAUSE ", temp, "}", NULL);
         shift_state = 0;
+        break;
+      case 11:
+        prev_value[0] = buffer[pos];
+        shift_state = 24;
         break;
       case 12:
         if (buffer[pos] < 250)
@@ -58,17 +69,48 @@ char * parse_buffer (const unsigned char * buffer, unsigned buffer_length) {
         shift_state = 0;
         break;
       case 16:
-        prev_value = buffer[pos];
-        shift_state = 17;
+        prev_value[0] = buffer[pos];
+        shift_state = 25;
         break;
       case 17:
-        sprintf(temp, "%02hhX%02hhX", buffer[pos], prev_value);
-        concatenate(&result, &length, "{PLAY_MUSIC 0x", temp, "}", NULL);
+        sprintf(temp, "%hhu", buffer[pos]);
+        concatenate(&result, &length, "{CLEAR ", temp, "}", NULL);
+        shift_state = 0;
+        break;
+      case 19:
+        sprintf(temp, "%hhu", buffer[pos]);
+        concatenate(&result, &length, "{CLEAR_TO ", temp, "}", NULL);
+        shift_state = 0;
+        break;
+      case 22:
+        prev_value[1] = buffer[pos];
+        shift_state = 23;
+        break;
+      case 23:
+        concatenate(&result, &length, "{COLOR_HIGHLIGHT_SHADOW ",
+          (prev_value[0] > 15) ? temp : colors[prev_value[0]], " ",
+          (prev_value[1] > 15) ? temp : colors[prev_value[1]], " ",
+          (buffer[pos] > 15) ? temp : colors[buffer[pos]], "}", NULL);
+        shift_state = 0;
+        break;
+      case 24:
+        sprintf(temp, "%02hhX%02hhX", buffer[pos], prev_value[0]);
+        concatenate(&result, &length, "{PLAY_BGM 0x", temp, "}", NULL);
+        shift_state = 0;
+        break;
+      case 25:
+        sprintf(temp, "%02hhX%02hhX", buffer[pos], prev_value[0]);
+        concatenate(&result, &length, "{PLAY_SE 0x", temp, "}", NULL);
+        shift_state = 0;
+        break;
+      case 0xf9:
+        sprintf(temp, "%hhu", buffer[pos]);
+        concatenate(&result, &length, "{UNK_CTRL_F9 ", temp, "}", NULL);
         shift_state = 0;
         break;
       case 0xfc:
         switch (buffer[pos]) {
-          case 1: case 2: case 3: case 4: case 6: case 8: case 12: case 13: case 16:
+          case 1: case 2: case 3: case 4: case 5: case 6: case 8: case 11: case 12: case 13: case 16: case 17: case 19:
             shift_state = buffer[pos];
             break;
           case 0:
