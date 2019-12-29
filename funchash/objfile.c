@@ -8,6 +8,7 @@ int process_file (const char * filename, const struct ELF * reference, const str
     free(error);
     return 2;
   }
+  if (reference && (file -> type == ELF_FILE_RELOCATABLE)) load_effective_section_addresses(file, reference);
   unsigned * function_symbols;
   int status = 2;
   if (options -> patterns)

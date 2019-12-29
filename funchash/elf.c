@@ -40,19 +40,23 @@ char * parse_ELF_header (struct ELF * file) {
     return duplicate_string("ELF file must be built for an ARM32 machine");
   if (convert_buffer_to_number(file -> data + 20, 2) != 1)
     return duplicate_string("unknown ELF version");
-  unsigned section_header_pointer, section_size, section_count;
-  section_header_pointer = convert_buffer_to_number(file -> data + 32, 4);
-  section_size = convert_buffer_to_number(file -> data + 46, 2);
-  section_count = convert_buffer_to_number(file -> data + 48, 2);
+  unsigned section_header_pointer = convert_buffer_to_number(file -> data + 32, 4);
+  unsigned short section_size = convert_buffer_to_number(file -> data + 46, 2);
+  unsigned short section_count = convert_buffer_to_number(file -> data + 48, 2);
   if (!(section_header_pointer && section_size && section_count))
     return duplicate_string("ELF file does not contain a section table");
-  return read_ELF_section_table(file, section_header_pointer, section_count, section_size);
+  char * result = read_ELF_section_table(file, section_header_pointer, section_count, section_size);
+  if (result) return result;
+  unsigned short index = convert_buffer_to_number(file -> data + 50, 2);
+  if (!index) return NULL;
+  return load_ELF_section_names(file, section_header_pointer, section_count, section_size, index);
 }
 
-char * read_ELF_section_table (struct ELF * file, unsigned position, unsigned count, unsigned entry_size) {
-  if (file -> size < (position + count * entry_size)) return duplicate_string("unexpected end of file");
+char * read_ELF_section_table (struct ELF * file, unsigned position, unsigned short count, unsigned short entry_size) {
+  if (file -> size < (position + count * (unsigned) entry_size)) return duplicate_string("unexpected end of file");
   file -> sections = calloc(count, sizeof(struct ELF_section));
-  unsigned index, offset = position;
+  unsigned offset = position;
+  unsigned short index;
   for (index = 0; index < count; index ++, offset += entry_size) {
     file -> sections[index] = (struct ELF_section) {
       .type = convert_buffer_to_number(file -> data + offset + 4, 4),
@@ -61,18 +65,34 @@ char * read_ELF_section_table (struct ELF * file, unsigned position, unsigned co
       .size = convert_buffer_to_number(file -> data + offset + 20, 4),
       .link = convert_buffer_to_number(file -> data + offset + 24, 4),
       .info = convert_buffer_to_number(file -> data + offset + 28, 4),
-      .entry_size = convert_buffer_to_number(file -> data + offset + 36, 4)
+      .entry_size = convert_buffer_to_number(file -> data + offset + 36, 4),
+      .name = ""
     };
     if ((file -> sections[index].type == ELF_SECTION_NOBITS) && (file -> sections[index].position <= file -> size)) continue;
     if (file -> sections[index].position >= file -> size)
-      return generate_string("section #%u is located beyond the end of the file", index);
+      return generate_string("section #%hu is located beyond the end of the file", index);
     if ((file -> size - file -> sections[index].position) < file -> sections[index].size)
-      return generate_string("section #%u ends beyond the end of the file", index);
+      return generate_string("section #%hu ends beyond the end of the file", index);
     if (file -> sections[index].type == ELF_SECTION_STRTAB && (file -> data[file -> sections[index].position] ||
                                                                file -> data[file -> sections[index].position + file -> sections[index].size - 1]))
-      return generate_string("string table section #%u does not begin and end with a null character", index);
+      return generate_string("string table section #%hu does not begin and end with a null character", index);
   }
   file -> section_count = count;
+  return NULL;
+}
+
+char * load_ELF_section_names (struct ELF * file, unsigned position, unsigned short count, unsigned short entry_size, unsigned short table) {
+  if (table >= file -> section_count) return generate_string("section name string table section %hu does not exist", table);
+  if (file -> sections[table].type != ELF_SECTION_STRTAB)
+    return generate_string("section name string table section %hu is not a string table", table);
+  unsigned short section;
+  for (section = 0; section < count; section ++, position += entry_size) {
+    unsigned string_offset = convert_buffer_to_number(file -> data + position, 4);
+    if (!string_offset) continue;
+    if (string_offset >= file -> sections[table].size)
+      return generate_string("section #%hu's name points beyond the end of the section name string table", section);
+    file -> sections[section].name = file -> data + file -> sections[table].position + string_offset;
+  }
   return NULL;
 }
 

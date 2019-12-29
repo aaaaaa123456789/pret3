@@ -21,7 +21,8 @@
 struct ELF * load_ELF_file(const char *, char **);
 void destroy_ELF_file(struct ELF *);
 char * parse_ELF_header(struct ELF *);
-char * read_ELF_section_table(struct ELF *, unsigned, unsigned, unsigned);
+char * read_ELF_section_table(struct ELF *, unsigned, unsigned short, unsigned short);
+char * load_ELF_section_names(struct ELF *, unsigned, unsigned short, unsigned short, unsigned short);
 char * load_ELF_symbols(struct ELF *);
 char * sort_ELF_symbols(struct ELF *);
 int compare_ELF_symbols(const void *, const void *);
@@ -96,6 +97,7 @@ extern const unsigned relocation_table_size;
 
 // relocate.c
 char * relocate(unsigned char *, unsigned, const struct ELF_relocation *, const struct ELF *, const struct ELF *);
+void load_effective_section_addresses(struct ELF *, const struct ELF *);
 
 // sha1.c
 unsigned char * calculate_sha1(const void *, unsigned);

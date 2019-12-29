@@ -41,13 +41,14 @@ enum ARM_relocations {
 
 struct ELF_section {
   unsigned type;
-  unsigned load_address;
+  unsigned load_address; // for relocatable files: address where it will be loaded into the reference file
   unsigned position;
   unsigned size;
   unsigned entry_size;
   unsigned link;
   unsigned info;
   unsigned item_offset; // SYMTAB: first symbol; PROGBITS: first relocation (or -1 for none)
+  const char * name;
 };
 
 struct ELF_symbol {
