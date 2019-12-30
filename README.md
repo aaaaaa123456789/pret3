@@ -8,5 +8,5 @@ clear which folder belongs to which tool.
 To build datadump: `gcc -O3 datadump/*.c -o ddump` (or `make ddump`). For more information, view
 [the documentation](datadump/docs.md).
 
-To build gbafhash: `gcc -O3 funchash/*c -o gbafhash` (or `make gbafhash`). For more information, view the
-documentation that is currently a WIP.
+To build gbafhash: `gcc -O3 funchash/*.c -o gbafhash` (or `make gbafhash`). For more information, view
+[the documentation](funchash/docs.md).
