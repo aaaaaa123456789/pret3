@@ -42,7 +42,7 @@ int process_multiple_files (const struct ELF * reference, const struct options *
   int status = 0;
   for (file = options -> filenames; *file; file ++) {
     if (file != options -> filenames) puts("");
-    puts(*file);
+    printf("%s:\n", *file);
     if (process_file(*file, reference, options)) status = 1;
   }
   return status;

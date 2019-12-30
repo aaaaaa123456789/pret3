@@ -178,6 +178,7 @@ int compare_ELF_symbols (const void * s1, const void * s2) {
   if (!result) result = !(**second).section - !(**first).section;
   if (!result) result = !(**second).visibility - !(**first).visibility;
   if (!result) result = ((**first).visibility > (**second).visibility) - ((**first).visibility < (**second).visibility);
+  return result;
 }
 
 char * load_ELF_relocations (struct ELF * file) {
