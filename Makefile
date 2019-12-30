@@ -4,7 +4,7 @@
 DEBUG := 0
 
 ifeq ($(DEBUG), 2)
-CFLAGS := -ggdb -Wall -Wextra -fsanitize=undefined -Wno-idiomatic-parentheses -Wno-pointer-sign -Wno-dangling-else
+CFLAGS := -ggdb -Wall -Wextra -fsanitize=undefined -Wno-parentheses -Wno-pointer-sign -Wno-dangling-else
 else ifeq ($(DEBUG), 1)
 CFLAGS := -ggdb
 else
