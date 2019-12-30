@@ -5,7 +5,8 @@ A makefile is included to build all the tools here; type `make` to do so. The fo
 than the tools themselves to avoid a collision between the folder names and the filenames; hopefully it should be
 clear which folder belongs to which tool.
 
-To build datadump: `gcc -O3 datadump/*.c -o ddump`. For more information, view [the documentation](datadump/docs.md).
+To build datadump: `gcc -O3 datadump/*.c -o ddump` (or `make ddump`). For more information, view
+[the documentation](datadump/docs.md).
 
-To build gbafhash: `gcc -O3 funchash/*c -o gbafhash`. For more information, view the documentation that is currently
-a WIP.
+To build gbafhash: `gcc -O3 funchash/*c -o gbafhash` (or `make gbafhash`). For more information, view the
+documentation that is currently a WIP.
