@@ -17,8 +17,8 @@ clean:
 	rm -rf ddump
 	rm -rf gbafhash
 
-ddump: datadump/*.c
-	$(CC) $(CFLAGS) $^ -o $@
+ddump: datadump/*.c datadump/*.h
+	$(CC) $(CFLAGS) datadump/*.c -o $@
 
-gbafhash: funchash/*.c
-	$(CC) $(CFLAGS) $^ -o $@
+gbafhash: funchash/*.c funchash/*.h
+	$(CC) $(CFLAGS) funchash/*.c -o $@
