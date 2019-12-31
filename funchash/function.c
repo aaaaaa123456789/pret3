@@ -18,24 +18,23 @@ char * compare_function_data (const struct ELF * file, const struct ELF * base, 
   void * first = NULL;
   void * second = NULL;
   const struct ELF_symbol * symbol = find_function_symbol(base, reference -> name);
-  if (!symbol) {
-    error = generate_string("function %s not found in reference file", reference -> name);
-    goto done;
-  } else if (reference -> size != symbol -> size) {
+  if (!symbol)
+    return generate_string("function %s not found in reference file", reference -> name);
+  else if (reference -> size != symbol -> size) {
     strcpy(result, "FAIL");
     return NULL;
   }
   first = extract_function_from_ELF(file, base, reference, &error);
-  if (!first) goto done;
+  if (!first) return error;
   second = extract_function_from_ELF(base, NULL, symbol, &error);
   if (!second) {
     char * old_error = error;
     error = generate_string("(in reference file) %s", old_error);
     free(old_error);
-    goto done;
+    free(first);
+    return error;
   }
   strcpy(result, memcmp(first, second, reference -> size) ? "FAIL" : "OK  ");
-  done:
   free(second);
   free(first);
   return error;
