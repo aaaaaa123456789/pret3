@@ -19,7 +19,9 @@ char * compare_function_data (const struct ELF * file, const struct ELF * base, 
   void * second = NULL;
   const struct ELF_symbol * symbol = find_function_symbol(base, reference -> name);
   if (!symbol)
-    return generate_string("function %s not found in reference file", reference -> name);
+    return duplicate_string("function not found in reference file");
+  else if (!(symbol -> size))
+    return duplicate_string("(in reference file) function does not declare a size");
   else if (reference -> size != symbol -> size) {
     strcpy(result, "FAIL");
     return NULL;
@@ -51,7 +53,7 @@ void * extract_function_from_ELF (const struct ELF * file, const struct ELF * ba
   else if (reference -> type != ELF_SYMBOL_FUNCTION)
     *error = duplicate_string("not a function");
   else if (!(reference -> size))
-    *error = duplicate_string("function is empty");
+    *error = duplicate_string("function does not declare a size");
   else if (base && (base -> type != ELF_FILE_EXECUTABLE))
     *error = duplicate_string("relocation base is not an executable ELF file");
   if (*error) return NULL;
