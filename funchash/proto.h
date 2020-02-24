@@ -14,7 +14,7 @@
 #define HASH_LENGTH 40
 
 #if UINT_MAX < 4294967295
-	#error This program will not work with ints narrower than 32 bits.
+  #error This program will not work with ints narrower than 32 bits.
 #endif
 
 // elf.c
