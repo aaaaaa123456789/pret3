@@ -1,7 +1,7 @@
 #include "proto.h"
 
 int validate_pointers (const unsigned char * data, unsigned length) {
-  unsigned count, current, nonzero = 0, pos = 0;
+  unsigned current, nonzero = 0, pos = 0;
   while (pos < length) {
     current = convert_buffer_to_number(data + pos, 4);
     pos += 4;

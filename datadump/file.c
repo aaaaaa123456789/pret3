@@ -113,7 +113,7 @@ void transfer_temporary_to_file (FILE * file) {
   clearerr(file);
   while (!(feof(global_temporary_file) || ferror(global_temporary_file))) {
     rv = fread(buffer, 1, 65536, global_temporary_file);
-    if (rv < 0) break;
+    if (!rv) break;
     if (fwrite(buffer, 1, rv, file) != rv) break;
   }
   if (ferror(global_temporary_file) || ferror(file)) {
