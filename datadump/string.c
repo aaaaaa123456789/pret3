@@ -56,7 +56,7 @@ char ** split_by (const char * string, const char * delimiters) {
   string += strspn(string, delimiters);
   while (*string) {
     length = strcspn(string, delimiters);
-    result = realloc(result, sizeof(char **) * (count + 1));
+    result = realloc(result, (count + 1) * sizeof *result);
     result[count] = malloc(length + 1);
     memcpy(result[count], string, length);
     result[count][length] = 0;
