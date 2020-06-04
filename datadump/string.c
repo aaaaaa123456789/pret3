@@ -45,6 +45,17 @@ char * duplicate_string (const char * string) {
   return result;
 }
 
+char * trim_string (const char * string) {
+  if (!string) return NULL;
+  string += strspn(string, " \t");
+  unsigned length = strlen(string);
+  while (length && strchr(" \t", string[length - 1])) length --;
+  char * result = malloc(length + 1);
+  memcpy(result, string, length);
+  result[length] = 0;
+  return result;
+}
+
 char ** split_by_spaces (const char * string) {
   return split_by(string, " \t");
 }
@@ -84,6 +95,21 @@ void destroy_string_array (char ** array) {
 
 const char * find_first_non_space (const char * string) {
   return string + strspn(string, " \t");
+}
+
+const char * find_first_unquoted (const char * string, char character) {
+  const char * result = strchr(string, character);
+  if (character == '"') return result;
+  const char * quote;
+  while (quote = strchr(string, '"')) {
+    if (!result) return NULL;
+    if (result < quote) return result;
+    quote = strchr(quote + 1, '"');
+    if (!quote) return NULL;
+    string = quote + 1;
+    if (result < string) result = strchr(string, character);
+  }
+  return result;
 }
 
 void generate_initial_indented_line (char ** string, unsigned * length) {

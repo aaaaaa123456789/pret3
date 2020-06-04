@@ -18,22 +18,27 @@ struct incbin * get_incbin_data (const char * line) {
   result -> file[end - pos] = 0;
   pos = strchr(end, ',');
   if (!pos) return result;
-  pos ++;
-  end = strchr(pos, ',');
-  result -> offset = get_value_from_string(pos, end ? (end - pos) : strlen(pos));
+  char * trimmed_line = trim_string(pos + 1);
+  char * comment = (char *) find_first_unquoted(line, '@');
+  if (comment) *comment = 0;
+  end = strchr(trimmed_line, ',');
+  result -> offset = get_value_from_string(pos, end ? (end - trimmed_line) : strlen(trimmed_line));
   if (result -> offset == ((unsigned) -1)) {
     printf("err: invalid offset\n");
     free(result);
-    return NULL;
+    result = NULL;
+    goto done;
   }
-  if (!end) return result;
+  if (!end) goto done;
   end ++;
   result -> length = get_value_from_string(end, strlen(end));
   if (!(result -> length) || (result -> length == ((unsigned) -1))) {
     printf("err: invalid length\n");
     free(result);
-    return NULL;
+    result = NULL;
   }
+  done:
+  free(trimmed_line);
   return result;
 }
 

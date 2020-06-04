@@ -164,11 +164,13 @@ unsigned get_value_from_string(const char *, unsigned);
 int convert_string_to_number(const char *, int);
 void concatenate(char **, unsigned *, ...);
 char * duplicate_string(const char *);
+char * trim_string(const char *);
 char ** split_by_spaces(const char *);
 char ** split_by(const char *, const char *);
 unsigned string_array_size(char **);
 void destroy_string_array(char **);
 const char * find_first_non_space(const char *);
+const char * find_first_unquoted(const char *, char);
 void generate_initial_indented_line(char **, unsigned *);
 void generate_UTF8_character(char *, unsigned);
 
