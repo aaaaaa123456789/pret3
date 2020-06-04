@@ -32,23 +32,24 @@ int handle_incbin_text (struct incbin * incbin, const unsigned char * data, FILE
     }
     printf("String found:\n%s\n", string);
     do {
-      command = get_command("Keep string? ", 0x20f03);
+      command = get_command("Keep string? ", (1 << COMMAND_ABORT) | (1 << COMMAND_DONE) | (1 << COMMAND_YES) | (1 << COMMAND_YESTOALL) |
+                                             (1 << COMMAND_NO) | (1 << COMMAND_NOTOALL) | (1 << COMMAND_SETTINGS));
       switch (command) {
-        case 0:
+        case COMMAND_ABORT:
           exit(0);
-        case 1:
+        case COMMAND_DONE:
           result = 3;
-        case 11:
+        case COMMAND_NOTOALL:
           write_incbin_for_segment(incbin -> file, incbin -> offset + prev_pos, incbin -> length - prev_pos, out);
           free(indent);
           return result;
-        case 10:
+        case COMMAND_NO:
           free(string);
           pos += block;
           continue;
-        case 9:
+        case COMMAND_YESTOALL:
           yestoall = 1;
-        case 8:
+        case COMMAND_YES:
           write_incbin_for_segment(incbin -> file, incbin -> offset + prev_pos, pos - prev_pos, out);
           printf(">>>> %s.string \"%s\"\n", indent, string);
           fprintf(out, "%s.string \"%s\"\n", indent, string);
@@ -56,10 +57,10 @@ int handle_incbin_text (struct incbin * incbin, const unsigned char * data, FILE
           pos += block;
           prev_pos = pos;
           break;
-        case 17:
+        case COMMAND_SETTINGS:
           settings_mode();
       }
-    } while (command == 17);
+    } while (command == COMMAND_SETTINGS);
   }
   write_incbin_for_segment(incbin -> file, incbin -> offset + prev_pos, incbin -> length - prev_pos, out);
   free(indent);

@@ -3,12 +3,12 @@
 
 struct settings global_settings = {
   .insert_replacement_comment = 1,
-  .indent_lines = 0,
-  .code_labels = 1,
-  .data_labels = 2,
-  .endianness = 0,
-  .elf_endian = 1,
-  .pointer_model = 1
+  .indent_lines               = 0,
+  .code_labels                = 1,
+  .data_labels                = 2,
+  .endianness                 = 0,
+  .elf_endian                 = 1,
+  .pointer_model              = 1
 };
 
 const char * text_table[] = {
@@ -74,33 +74,33 @@ const char * emoji[] = {"EMOJI_UNDERSCORE", "EMOJI_PIPE", "EMOJI_HIGHBAR", "EMOJ
                         "EMOJI_NEUTRAL", "EMOJI_SHOCKED", "EMOJI_BIGANGER"};
 
 struct command commands[] = {
-  {"abort",        NULL,        "aborts all processing and exits"},
-  {"done",         "!",         "finishes normally without parsing any more files"},
-  {"skip",         "s",         "skips the current file entirely and outputs it" HELP_TEXT_NEWLINE
-                                "as an .incbin"},
-  {"data8",        NULL,        "outputs the current file as a series of 8-bit values"},
-  {"data16",       NULL,        "outputs the current file as a series of 16-bit values"},
-  {"data32",       NULL,        "outputs the current file as a series of 32-bit values"},
-  {"dataptr",      NULL,        "outputs the current file as a series of pointers"},
-  {"textscan",     "t",         "scans the current file for text strings to output"},
-  {"yes",          "y",         "preserves the current string as a .string"},
-  {"yestoall",     "y!",        "preserves the current string and all subsequent" HELP_TEXT_NEWLINE
-                                "ones in the file as .string values"},
-  {"no",           "n",         "keeps the current string as part of an .incbin"},
-  {"notoall",      "n!",        "keeps the current string and all subsequent ones" HELP_TEXT_NEWLINE
-                                "in the file as part of an .incbin"},
-  {"preview",      "p",         "previews the current .incbin, 256 bytes at a time"},
-  {"dump",         NULL,        "dumps the current .incbin as text data (in the same format" HELP_TEXT_NEWLINE
-                                "as a preview) into a file"},
-  {"dumpraw",      NULL,        "dumps the data of the current .incbin into a binary file"},
-  {"script",       NULL,        "executes a user-defined script on the current .incbin"},
-  {"scriptall",    NULL,        "executes a user-defined script on every remaining .incbin" HELP_TEXT_NEWLINE
-                                "in the input, outputting the results or preserving the" HELP_TEXT_NEWLINE
-                                "original .incbin on script error"},
-  {"settings",     "set",       "enters settings and configuration mode"},
-  {"loadsym",      "ls",        "loads symbol data from an ELF file"},
-  {"unloadsym",    "us",        "unloads the currently loaded symbol data"},
-  {NULL,           NULL,        NULL}
+  [COMMAND_ABORT]     = {"abort",        NULL,        "aborts all processing and exits"},
+  [COMMAND_DONE]      = {"done",         "!",         "finishes normally without parsing any more files"},
+  [COMMAND_SKIP]      = {"skip",         "s",         "skips the current file entirely and outputs it" HELP_TEXT_NEWLINE
+                                                      "as an .incbin"},
+  [COMMAND_DATA8]     = {"data8",        NULL,        "outputs the current file as a series of 8-bit values"},
+  [COMMAND_DATA16]    = {"data16",       NULL,        "outputs the current file as a series of 16-bit values"},
+  [COMMAND_DATA32]    = {"data32",       NULL,        "outputs the current file as a series of 32-bit values"},
+  [COMMAND_DATAPTR]   = {"dataptr",      NULL,        "outputs the current file as a series of pointers"},
+  [COMMAND_TEXTSCAN]  = {"textscan",     "t",         "scans the current file for text strings to output"},
+  [COMMAND_YES]       = {"yes",          "y",         "preserves the current string as a .string"},
+  [COMMAND_YESTOALL]  = {"yestoall",     "y!",        "preserves the current string and all subsequent" HELP_TEXT_NEWLINE
+                                                      "ones in the file as .string values"},
+  [COMMAND_NO]        = {"no",           "n",         "keeps the current string as part of an .incbin"},
+  [COMMAND_NOTOALL]   = {"notoall",      "n!",        "keeps the current string and all subsequent ones" HELP_TEXT_NEWLINE
+                                                      "in the file as part of an .incbin"},
+  [COMMAND_PREVIEW]   = {"preview",      "p",         "previews the current .incbin, 256 bytes at a time"},
+  [COMMAND_DUMP]      = {"dump",         NULL,        "dumps the current .incbin as text data (in the same format" HELP_TEXT_NEWLINE
+                                                      "as a preview) into a file"},
+  [COMMAND_DUMPRAW]   = {"dumpraw",      NULL,        "dumps the data of the current .incbin into a binary file"},
+  [COMMAND_SCRIPT]    = {"script",       NULL,        "executes a user-defined script on the current .incbin"},
+  [COMMAND_SCRIPTALL] = {"scriptall",    NULL,        "executes a user-defined script on every remaining .incbin" HELP_TEXT_NEWLINE
+                                                      "in the input, outputting the results or preserving the" HELP_TEXT_NEWLINE
+                                                      "original .incbin on script error"},
+  [COMMAND_SETTINGS]  = {"settings",     "set",       "enters settings and configuration mode"},
+  [COMMAND_LOADSYM]   = {"loadsym",      "ls",        "loads symbol data from an ELF file"},
+  [COMMAND_UNLOADSYM] = {"unloadsym",    "us",        "unloads the currently loaded symbol data"},
+  [COMMANDS]          = {NULL,           NULL,        NULL}
 };
 
 struct setting_entry setting_entries[] = {

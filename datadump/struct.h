@@ -71,3 +71,27 @@ enum execution_modes {
   MODE_AUTO_DATA_32 = 4,
   MODE_AUTO_SCRIPT = 5
 };
+
+enum interactive_mode_commands {
+  COMMAND_ABORT     =  0,
+  COMMAND_DONE      =  1,
+  COMMAND_SKIP      =  2,
+  COMMAND_DATA8     =  3,
+  COMMAND_DATA16    =  4,
+  COMMAND_DATA32    =  5,
+  COMMAND_DATAPTR   =  6,
+  COMMAND_TEXTSCAN  =  7,
+  COMMAND_YES       =  8,
+  COMMAND_YESTOALL  =  9,
+  COMMAND_NO        = 10,
+  COMMAND_NOTOALL   = 11,
+  COMMAND_PREVIEW   = 12,
+  COMMAND_DUMP      = 13,
+  COMMAND_DUMPRAW   = 14,
+  COMMAND_SCRIPT    = 15,
+  COMMAND_SCRIPTALL = 16,
+  COMMAND_SETTINGS  = 17,
+  COMMAND_LOADSYM   = 18,
+  COMMAND_UNLOADSYM = 19,
+  COMMANDS          = 20
+};
