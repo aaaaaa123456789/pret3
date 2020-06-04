@@ -1,7 +1,7 @@
 #include "proto.h"
 
 int run_script (struct incbin * incbin, const void * data, FILE * out) {
-  printf("Script file: ");
+  fputs("Script file: ", stdout);
   char * script_name = read_line(stdin);
   if (!*script_name) {
     free(script_name);
@@ -10,7 +10,7 @@ int run_script (struct incbin * incbin, const void * data, FILE * out) {
   FILE * script = fopen(script_name, "r");
   free(script_name);
   if (!script) {
-    printf("err: could not open script file\n");
+    puts("err: could not open script file");
     return 0;
   }
   char ** script_lines = read_file_by_lines(script);

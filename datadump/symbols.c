@@ -1,7 +1,7 @@
 #include "proto.h"
 
 void load_symbols (void) {
-  printf("ELF file: ");
+  fputs("ELF file: ", stdout);
   char * filename = read_line(stdin);
   if (!*filename) {
     free(filename);

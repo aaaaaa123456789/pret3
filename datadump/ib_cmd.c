@@ -30,7 +30,7 @@ int handle_incbin_data (struct incbin * incbin, const unsigned char * data, FILE
         if (run_script(incbin, data, out)) return 0;
         break;
       case 16:
-        printf("Script file: ");
+        fputs("Script file: ", stdout);
         *script_file = read_line(stdin);
         if (!**script_file) {
           free(*script_file);

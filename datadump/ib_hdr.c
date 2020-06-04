@@ -3,13 +3,13 @@
 struct incbin * get_incbin_data (const char * line) {
   const char * pos = strchr(strstr(line, ".incbin"), '"');
   if (!pos) {
-    printf("err: no filename specified\n");
+    puts("err: no filename specified");
     return NULL;
   }
   pos ++;
   const char * end = strchr(pos, '"');
   if (!end) {
-    printf("err: invalid filename specification\n");
+    puts("err: invalid filename specification");
     return NULL;
   }
   struct incbin * result = malloc(end - pos + 1 + sizeof(struct incbin));
@@ -23,8 +23,8 @@ struct incbin * get_incbin_data (const char * line) {
   if (comment) *comment = 0;
   end = strchr(trimmed_line, ',');
   result -> offset = get_value_from_string(pos, end ? (end - trimmed_line) : strlen(trimmed_line));
-  if (result -> offset == ((unsigned) -1)) {
-    printf("err: invalid offset\n");
+  if (result -> offset == -1u) {
+    puts("err: invalid offset");
     free(result);
     result = NULL;
     goto done;
@@ -32,8 +32,8 @@ struct incbin * get_incbin_data (const char * line) {
   if (!end) goto done;
   end ++;
   result -> length = get_value_from_string(end, strlen(end));
-  if (!(result -> length) || (result -> length == ((unsigned) -1))) {
-    printf("err: invalid length\n");
+  if (!(result -> length) || (result -> length == -1u)) {
+    puts("err: invalid length");
     free(result);
     result = NULL;
   }

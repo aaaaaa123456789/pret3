@@ -9,7 +9,7 @@ void settings_mode (void) {
   puts("Enter a setting to view its value, or a setting and a value to change it.");
   puts("Enter ? for help, or a blank line to exit configuration mode.");
   while (1) {
-    printf("config> ");
+    fputs("config> ", stdout);
     line = read_line(stdin);
     if (!*line) {
       free(line);

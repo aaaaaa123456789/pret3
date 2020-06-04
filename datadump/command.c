@@ -4,7 +4,7 @@ unsigned char get_command (const char * prompt, unsigned mask) {
   char * line;
   unsigned char command;
   while (1) {
-    printf("%s", prompt);
+    fputs(prompt, stdout);
     line = read_line(stdin);
     if (!*line) {
       free(line);
@@ -29,7 +29,7 @@ unsigned char get_command (const char * prompt, unsigned mask) {
       }
     }
     free(line);
-    printf("Invalid command, enter ? for help.\n");
+    puts("Invalid command, enter ? for help.");
   }
 }
 
@@ -39,7 +39,7 @@ void print_command_help (unsigned mask) {
     if (!(mask & (1 << command))) continue;
     printf("%-" COMMAND_LENGTH "s - ", commands[command].name);
     if (commands[command].alias) printf("(alias: %s) ", commands[command].alias);
-    printf("%s\n", commands[command].help_text);
+    puts(commands[command].help_text);
   }
   printf("%-" COMMAND_LENGTH "s - %s\n", "help", "(alias: ?) displays this help");
 }
