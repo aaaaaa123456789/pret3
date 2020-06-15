@@ -22,7 +22,7 @@ struct incbin * get_incbin_data (const char * line) {
   char * comment = (char *) find_first_unquoted(line, '@');
   if (comment) *comment = 0;
   end = strchr(trimmed_line, ',');
-  result -> offset = get_value_from_string(pos, end ? (end - trimmed_line) : strlen(trimmed_line));
+  result -> offset = get_value_from_string(trimmed_line, end ? (end - trimmed_line) : strlen(trimmed_line));
   if (result -> offset == -1u) {
     puts("err: invalid offset");
     free(result);
