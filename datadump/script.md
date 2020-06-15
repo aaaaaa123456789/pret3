@@ -199,7 +199,7 @@ The following scripts show the basic features of the scripting language by examp
 The following script will turn a pure pointer incbin into the pointers that constitute it:
 
     $ptr :4 int:4 checkptr:1
-    .4byte $ptr
+    .4byte $*ptr
 
 The first line reads 4 bytes from the incbin stream (`:4`), converts those 4 bytes into a 32-bit integer and validates that the resulting number is indeed a valid pointer. The second line prints it. Since the script is executed repeatedly until all data is consumed, this will output all pointers from the incbin; if the length isn't a multiple of 4, or some of the values it contains aren't valid pointers, an error will be raised and the incbin will not be replaced.
 
@@ -208,7 +208,7 @@ If, for any reason, it is desired to also output the amount of pointers read, th
     $count 0
     :$
       $ptr :4 int:4 checkptr:1
-      .4byte $ptr
+      .4byte $*ptr
       $count $count add:1
     ::
     @$+count pointers written
@@ -219,7 +219,7 @@ An alternative to this is to read the pointers into an array, like so:
 
     $pointers : multi:4 checkptr:1
     $count $pointers length:0
-    .4byte $pointers
+    .4byte $*pointers
     @$+count pointers written
 
 The first line reads the whole input into an array of 32-bit integers (which will fail if the input isn't a multiple of 4 bytes) and ensures that all of those values are valid pointers. The second line obtains the amount of pointers in the array. The third line prints the pointers, and the fourth line prints the count. Unlike the previous scripts, this script will print all of the pointers in the same line, separated by commas (instead of one per line).
