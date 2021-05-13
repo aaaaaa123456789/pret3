@@ -4,7 +4,7 @@ int process_file (const char * filename, const struct ELF * reference, const str
   char * error = NULL;
   struct ELF * file = load_ELF_file(filename, &error);
   if (!file) {
-    printf("error: %s\n", error);
+    if (!options -> suppress_errors) printf("error: %s\n", error);
     free(error);
     return 2;
   }
@@ -16,7 +16,8 @@ int process_file (const char * filename, const struct ELF * reference, const str
   else
     function_symbols = get_all_function_symbols(file);
   if (!function_symbols || (*function_symbols == -1u)) {
-    puts(options -> patterns ? "error: no matching functions found" : "error: file contains no functions");
+    if (!options -> suppress_errors)
+      puts(options -> patterns ? "error: no matching functions found" : "error: file contains no functions");
     goto done;
   }
   char hash[HASH_LENGTH + 1] = {0};
@@ -27,7 +28,7 @@ int process_file (const char * filename, const struct ELF * reference, const str
   for (current_symbol = function_symbols; *current_symbol != -1u; current_symbol ++) {
     error = calculation(file, reference, file -> symbols + *current_symbol, hash);
     if (error) {
-      printf("error: %s\n", error);
+      if (!options -> suppress_errors) printf("error: %s\n", error);
       free(error);
       status = 1;
     }

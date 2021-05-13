@@ -97,5 +97,6 @@ struct options {
   const char ** filenames;
   const char * reference;
   const char ** patterns;
-  int compare_mode;
+  unsigned compare_mode:    1;
+  unsigned suppress_errors: 1;
 };

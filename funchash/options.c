@@ -24,6 +24,10 @@ struct options * parse_options (int argc, char ** argv) {
           if (!argv[1]) error_exit(3, "error: -%c option requires an argument", 1[*argv]);
           result -> reference = *(++ argv);
           break;
+        case 'q':
+          if (result -> suppress_errors) error_exit(3, "error: -q option can only be given once");
+          result -> suppress_errors = 1;
+          break;
         case 'v':
           print_version();
           exit(3);
@@ -65,7 +69,7 @@ void print_help (void) {
   fputs("gbafhash is released to the public domain. No copyright is claimed, and no\n"
         "warranty, implied or otherwise, is given with the program.\n"
         "\n"
-        "Usage: gbafhash [-c <base> | -r <base>] [-f <pattern> [-f <pattern> ...]]\n"
+        "Usage: gbafhash [-q] [-c <base> | -r <base>] [-f <pattern> [-f <pattern> ...]]\n"
         "                [--] <file> [<file> ...]\n"
         " -f <pattern>: only hash functions matching the name or pattern given in this\n"
         "               option; the pattern can be a function name to match exactly, or\n"
@@ -75,9 +79,9 @@ void print_help (void) {
         " -c <base>:    compare functions against the ones defined in this function,\n"
         "               printing an OK/FAIL status instead of a hash for each function.\n"
         "               This option implies -r, and they cannot be combined.\n"
+        " -q:           suppress all error output unless a fatal error occurs.\n"
         "Note that -- may be used to terminate the option list and parse all remaining\n"
-        "command-line arguments as filenames. Also, -h or -? print this help, and -v\n"
-        "will print version information.\n"
+        "command-line arguments as filenames. Also, -v will print version information.\n"
         "If neither -r nor -c are given, relocations will be handled depending on the\n"
         "type of file given, as defined by the ELF header. For executable files, the\n"
         "relocations contained in the file itself will be used; for relocatable files,\n"

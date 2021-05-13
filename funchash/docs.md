@@ -47,7 +47,7 @@ operate in four different modes:
 
 ### Usage
 
-    gbafhash [-c <base> | -r <base>] [-f <pattern> [-f <pattern> ...]] [--] <file> [<file> ...]
+    gbafhash [-q] [-c <base> | -r <base>] [-f <pattern> [-f <pattern> ...]] [--] <file> [<file> ...]
     gbafhash [-? | -v]
 
 Any number of input files can be given; the program will simply output the hashes (or the OK/FAIL results in external
@@ -65,6 +65,10 @@ the `-f` option, which can take a function name (to be matched exactly) or a pat
 that will match any sequence of characters in the name (for example, `a*z` will match `az`, `abz` and `abcz`). This
 option can be given multiple times; in that case, all functions that match at least one of the patterns will be
 hashed. (Note that patterns containing more than one `*` character are not supported at the moment.)
+
+The `-q` option will suppress errors that prevent a function's hash from being calculated or compared. The hash (or
+the OK/FAIL result if `-c` is used) will still be replaced by asterisks, but the error text itself will not be
+displayed before the function.
 
 Finally, the `--` flag can be used as a delimiter, forcing all subsequent arguments to be interpreted as filenames
 and not as options, even if they begin with a hyphen. The `-v` option will make the program print its version number,
