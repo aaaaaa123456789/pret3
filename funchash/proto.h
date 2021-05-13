@@ -8,7 +8,7 @@
 #include "struct.h"
 #include "inline.h"
 
-#define VERSION "0.1.1"
+#define VERSION "0.1.2"
 
 #define FUNCTION_EXCESS_BUFFER_SIZE 4
 #define HASH_LENGTH 40
