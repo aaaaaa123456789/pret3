@@ -42,7 +42,7 @@ const struct ELF_symbol * const * find_symbol_pointer (const struct ELF * file, 
   if (!(file && name && *name)) return NULL;
   const struct ELF_symbol * const * result = bsearch(name, list, length, sizeof(struct ELF_symbol *), &match_symbol_name);
   if (!result) return NULL;
-  while ((result > file -> sorted_symbols) && !strcmp(name, result[-1] -> name)) result --;
+  while ((result > list) && !strcmp(name, result[-1] -> name)) result --;
   return result;
 }
 
