@@ -22,6 +22,8 @@ char * compare_function_data (const struct ELF * file, const struct ELF * base, 
     return duplicate_string("function not found in reference file");
   else if (!(symbol -> size))
     return duplicate_string("(in reference file) function does not declare a size");
+  else if (!(reference -> size))
+    return duplicate_string("function does not declare a size");
   else if (reference -> size != symbol -> size) {
     strcpy(result, "FAIL");
     return NULL;
